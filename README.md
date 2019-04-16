@@ -14,6 +14,9 @@
 + 3、字母、数字混合键盘
  ![number_keyboard](output/shots/letter_number_keyboard.png)
  
+ + 3、被拖至底部的混合键盘
+  ![number_keyboard](output/shots/move_to_bottom_keyboard.png)
+ 
 ### 三、Usage
  使用要点：
  + a、创建[KeyBoardView](keboardLibrary/src/main/java/jsc/kit/keyboard/KeyBoardView.java)实例（支持xml布局文件）：
