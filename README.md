@@ -1,7 +1,10 @@
 # Keyboard
 自定义支持拖动、支持缩放的软键盘。适用于Activity、Fragment、DialogFragment。
 
-### 一、Screenshots
+### 一、扫描下载体验
+![](app/src/main/res/drawable/keboard_qr_code.png)
+
+### 二、Screenshots
  + 1、数字键盘
  ![number_keyboard](output/shots/number_keyboard.png)
  
@@ -11,9 +14,9 @@
 + 3、字母、数字混合键盘
  ![number_keyboard](output/shots/letter_number_keyboard.png)
  
-### 二、Usage
+### 三、Usage
  使用要点：
- + a、创建[KeyBoardView](keboardLibrary/src/main/java/jsc/kit/keyboard/KeyBoardView.java)实例：
+ + a、创建[KeyBoardView](keboardLibrary/src/main/java/jsc/kit/keyboard/KeyBoardView.java)实例（支持xml布局文件）：
 ```
 KeyBoardView keyboardView = new KeyBoardView(context);
 ```
@@ -35,8 +38,38 @@ KeyBoardView keyboardView = new KeyBoardView(context);
 KeyUtils.init(getActivity().getWindow(), keyboardView);
 ```
  
- + 1、Activity、Fragment
- 
+ + 1、Activity、Fragment。这里以`Fragment`为例：
+ ```
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_keyboard, container, false);
+        keyboardView = new KeyBoardView(root.getContext());
+        keyboardView.addAllInputView(root);
+        KeyUtils.init(getActivity().getWindow(), keyboardView);
+
+        root.findViewById(R.id.btn_toggle).setOnClickListener(this);
+        root.findViewById(R.id.btn_dialog).setOnClickListener(this);
+        return root;
+    }
+    
+        @Override
+        public void onResume() {
+            super.onResume();
+            keyboardView.onResume();
+        }
+    
+        @Override
+        public void onPause() {
+            Log.i("KeyboardFragment", "onPause: ");
+            keyboardView.onPause();
+            super.onPause();
+        }
+    
+        @Override
+        public void onDestroy() {
+            keyboardView.onDestroy();
+            super.onDestroy();
+        }
+```
 
 ### LICENSE
 ```
