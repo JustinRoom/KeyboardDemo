@@ -1,7 +1,7 @@
 # Keyboard
 自定义可拖动的软键盘。适用于Activity、Fragment、DialogFragment。
 
-### Screenshots
+### 一、Screenshots
  + 1、数字键盘
  ![number_keyboard](output/shots/number_keyboard.png)
  
@@ -11,7 +11,7 @@
 + 3、字母、数字混合键盘
  ![number_keyboard](output/shots/letter_number_keyboard.png)
 
-### LICENSE
+### 二、LICENSE
 ```
    Copyright 2019 JustinRoom
 
