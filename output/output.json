@@ -1,0 +1,19 @@
+[
+  {
+    "outputType": {
+      "type": "APK"
+    },
+    "apkInfo": {
+      "type": "MAIN",
+      "splits": [],
+      "versionCode": 19,
+      "versionName": "0.0.1",
+      "enabled": true,
+      "outputFile": "KeyboardDemo.apk",
+      "fullName": "release",
+      "baseName": "release"
+    },
+    "path": "KeyboardDemo.apk",
+    "properties": {}
+  }
+]
