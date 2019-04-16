@@ -1,6 +1,15 @@
 # Keyboard
+自定义可拖动的软键盘。适用于Activity、Fragment、DialogFragment。
 
 ### Screenshots
+ + 1、数字键盘
+ ![number_keyboard](output/shots/number_keyboard.png)
+ 
+ + 2、字母键盘
+ ![number_keyboard](output/shots/letter_keyboard.png)
+  
++ 3、字母、数字混合键盘
+ ![number_keyboard](output/shots/letter_number_keyboard.png)
 
 ### LICENSE
 ```
