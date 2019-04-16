@@ -1,5 +1,5 @@
 # Keyboard
-自定义支持拖动、支持缩放的软键盘。适用于Activity、Fragment、DialogFragment。
+自定义支持拖动、支持缩放的软键盘。适用于Activity、Fragment、DialogFragment。当手指在键盘上滑动超过8pixels时就进入了拖动模式。
 
 ### 一、扫描下载体验
 ![](app/src/main/res/drawable/keboard_qr_code.png)
