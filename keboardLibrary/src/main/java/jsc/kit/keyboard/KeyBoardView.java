@@ -328,19 +328,12 @@ public class KeyBoardView extends LinearLayout {
     private void createKeys() {
         final SparseArray<KeyView> cache = resetKeys();
         List<List<KeyBean>> keys = KeyUtils.loadKeys(getKeyBoardType());
+        float maxWeight = getLayoutWeight(keys);
         int row = keys.size();
-        int column = 0;
-        switch (getKeyBoardType()) {
-            case KeyUtils.TYPE_LETTER:
-            case KeyUtils.TYPE_LETTER_NUMBER:
-                column = 11;
-                break;
-            case KeyUtils.TYPE_HORIZONTAL_NUMBER:
-                column = 12;
-                break;
-            case KeyUtils.TYPE_NINE_PALACE_NUMBER:
-                column = 4;
-                break;
+        int column = (int) maxWeight;
+        if (maxWeight > column) {
+            column++;
+            maxWeight = column;
         }
         size[0] = keyWidth * column + (column + 1) * keySpace;
         size[1] = keyHeight * row + (row + 1) * keySpace;
@@ -348,7 +341,7 @@ public class KeyBoardView extends LinearLayout {
             List<KeyBean> tempKeys = keys.get(i);
             LinearLayout layout = new LinearLayout(getContext());
             layout.setOrientation(HORIZONTAL);
-            layout.setWeightSum(column);
+            layout.setWeightSum(maxWeight);
             addView(layout, new LayoutParams(size[0], LayoutParams.WRAP_CONTENT));
             for (int j = 0; j < tempKeys.size(); j++) {
                 KeyBean bean = tempKeys.get(j);
@@ -386,6 +379,19 @@ public class KeyBoardView extends LinearLayout {
         params.bottomMargin = margin;
         layout.addView(keyView, params);
         return keyView;
+    }
+
+    private float getLayoutWeight(List<List<KeyBean>> keys) {
+        float maxWeight = 0;
+        for (int i = 0; i < keys.size(); i++) {
+            List<KeyBean> childKeys = keys.get(i);
+            float rowWeightSum = 0;
+            for (int j = 0; j < childKeys.size(); j++) {
+                rowWeightSum = rowWeightSum + childKeys.get(j).getHorizontalWeight();
+            }
+            maxWeight = Math.max(maxWeight, rowWeightSum);
+        }
+        return maxWeight;
     }
 
     private float getKeyTextSize(int key) {
@@ -884,9 +890,8 @@ public class KeyBoardView extends LinearLayout {
 
     public interface onCreateKeyListener {
         /**
-         *
          * @param keyboardType current keyboard type
-         * @param key the key of view was creating
+         * @param key          the key of view was creating
          * @return label text sie. It's unit is dp.
          */
         float getKeyTextSize(@KeyUtils.KeyBoardType String keyboardType, @KeyUtils.Key int key);
