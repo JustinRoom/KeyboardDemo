@@ -21,7 +21,6 @@ import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -55,6 +54,8 @@ public class KeyBoardView extends LinearLayout {
 
     //存储键盘上的按键view
     private SparseArray<KeyView> viewSparseArray = new SparseArray<>();
+    //按键点击动画管理器。使用此管理器，避免同一个按键点击过快而造成按键的scale混乱。
+    private SparseArray<Animator> animatorSparseArray = new SparseArray<>();
     //使用该软键盘的输入框管理
     private List<EditText> editTexts = new ArrayList<>(20);
     //当前聚焦的输入框
@@ -96,7 +97,8 @@ public class KeyBoardView extends LinearLayout {
     private int[] size = new int[2];
     private Rect rect = new Rect();
     //数字键盘样式：水平样式、9宫格样式
-    private @KeyUtils.KeyBoardType String numberKeyBoardType;
+    private @KeyUtils.KeyBoardType
+    String numberKeyBoardType;
     //键盘类型。目前只支持三种：数字键盘、字母键盘、数字+字混合键盘
     private String keyBoardType = "";
     //是否为大写模式
@@ -544,17 +546,24 @@ public class KeyBoardView extends LinearLayout {
 
     private void playClickAnimation(KeyView keyView) {
         int key = keyView.getBean().getKey();
+        Animator oldAnimator = animatorSparseArray.get(key);
+        if (oldAnimator != null) {
+            oldAnimator.cancel();
+        }
         if (KeyUtils.isNumberKey(key)
                 || KeyUtils.isLetterKey(key)
                 || key == KeyUtils.KEY_DOT
                 || key == KeyUtils.KEY_SIGNED) {
             float scaleX = keyView.getScaleX();
             float scaleY = keyView.getScaleY();
-            ObjectAnimator.ofPropertyValuesHolder(
+            ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(
                     keyView,
                     PropertyValuesHolder.ofFloat(View.SCALE_X, scaleX, scaleX * 1.2f, scaleX),
                     PropertyValuesHolder.ofFloat(View.SCALE_Y, scaleY, scaleY * 1.2f, scaleY)
-            ).setDuration(200).start();
+            ).setDuration(200);
+            animator.addListener(new CusAnimatorListener(key, scaleX, scaleY));
+            animatorSparseArray.put(key, animator);
+            animator.start();
         }
     }
 
@@ -899,5 +908,42 @@ public class KeyBoardView extends LinearLayout {
 
     public interface OnKeyDownListener {
         boolean onKeyDown(KeyBoardView keyBoardView, KeyView keyView);
+    }
+
+    private class CusAnimatorListener implements Animator.AnimatorListener {
+        private int key;
+        private float scaleX;
+        private float scaleY;
+
+        public CusAnimatorListener(int key, float scaleX, float scaleY) {
+            this.key = key;
+            this.scaleX = scaleX;
+            this.scaleY = scaleY;
+        }
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            animatorSparseArray.remove(key);
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+            animatorSparseArray.remove(key);
+            KeyView view = viewSparseArray.get(key);
+            if (view != null) {
+                view.setScaleX(scaleX);
+                view.setScaleY(scaleY);
+            }
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
     }
 }

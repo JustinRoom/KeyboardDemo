@@ -33,7 +33,7 @@ public class KeyboardFragment extends BaseFragment implements View.OnClickListen
         keyboardView = new KeyBoardView(root.getContext());
         keyboardView.addAllInputView(root);
 //        keyboardView.setNumberKeyBoardType(KeyUtils.TYPE_HORIZONTAL_NUMBER);
-        keyboardView.setSupportMoving(false);
+//        keyboardView.setSupportMoving(false);
         KeyUtils.init(getActivity().getWindow(), keyboardView, Gravity.BOTTOM | Gravity.END);
 
         root.findViewById(R.id.btn_toggle).setOnClickListener(this);
