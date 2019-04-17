@@ -1,9 +1,11 @@
 package jsc.kit.keyboard;
 
+import android.app.Activity;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
+import android.support.v4.app.Fragment;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
@@ -410,8 +412,16 @@ public class KeyUtils {
         return key >= KeyUtils.KEY_BLANK && key <= KeyUtils.KEY_BLACK;
     }
 
+    public static void init(Activity activity, @NonNull KeyBoardView keyboardView) {
+        init(activity == null ? null : activity.getWindow(), keyboardView, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+    }
+
     public static void init(Window window, @NonNull KeyBoardView keyboardView) {
         init(window, keyboardView, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+    }
+
+    public static void init(Activity activity, @NonNull KeyBoardView keyboardView, int gravity) {
+        init(activity == null ? null : activity.getWindow(), keyboardView, gravity);
     }
 
     public static void init(Window window, @NonNull KeyBoardView keyboardView, int gravity) {

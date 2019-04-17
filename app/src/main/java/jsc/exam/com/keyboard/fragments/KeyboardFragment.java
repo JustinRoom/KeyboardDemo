@@ -46,7 +46,7 @@ public class KeyboardFragment extends BaseFragment implements View.OnClickListen
                 return 14;
             }
         });
-        KeyUtils.init(getActivity().getWindow(), keyboardView, Gravity.BOTTOM | Gravity.END);
+        KeyUtils.init(getActivity(), keyboardView);
 
         root.findViewById(R.id.btn_toggle).setOnClickListener(this);
         root.findViewById(R.id.btn_dialog).setOnClickListener(this);
