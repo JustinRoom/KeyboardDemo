@@ -78,6 +78,8 @@ public class KeyBoardView extends LinearLayout {
             dispatchKeyDownEvent(keyView);
         }
     };
+    //是否支持拖动
+    private boolean supportMoving = true;
     //键盘拖动时touch坐标
     private float touchX;
     private float touchY;
@@ -93,6 +95,8 @@ public class KeyBoardView extends LinearLayout {
     //存储键盘的尺寸。size[0]为键盘宽度，size[1]为键盘高度
     private int[] size = new int[2];
     private Rect rect = new Rect();
+    //数字键盘样式：水平样式、9宫格样式
+    private @KeyUtils.KeyBoardType String numberKeyBoardType;
     //键盘类型。目前只支持三种：数字键盘、字母键盘、数字+字混合键盘
     private String keyBoardType = "";
     //是否为大写模式
@@ -126,10 +130,11 @@ public class KeyBoardView extends LinearLayout {
         if (keyHeight <= 0)
             keyHeight = keyWidth * 3 / 4;
         initKeyBoard(keyWidth, keyHeight, keySpace);
+        setNumberKeyBoardType(KeyUtils.TYPE_NINE_PALACE_NUMBER);
         if (isInEditMode())
             switch (boardType) {
                 case 0:
-                    show(KeyUtils.TYPE_NUMBER);
+                    show(getNumberKeyBoardType());
                     break;
                 case 1:
                     showNumberKeys = false;
@@ -145,7 +150,7 @@ public class KeyBoardView extends LinearLayout {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         //如果键盘是被缩小了，则不拦截touch事件
-        if (isScaled())
+        if (isScaled() || !supportMoving)
             return super.onInterceptTouchEvent(ev);
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
@@ -184,7 +189,7 @@ public class KeyBoardView extends LinearLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //如果键盘是被缩小了，则不处理touch事件
-        if (isScaled())
+        if (isScaled() || !supportMoving)
             return true;
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
@@ -322,7 +327,10 @@ public class KeyBoardView extends LinearLayout {
             case KeyUtils.TYPE_LETTER_NUMBER:
                 column = 11;
                 break;
-            case KeyUtils.TYPE_NUMBER:
+            case KeyUtils.TYPE_HORIZONTAL_NUMBER:
+                column = 12;
+                break;
+            case KeyUtils.TYPE_NINE_PALACE_NUMBER:
                 column = 5;
                 break;
         }
@@ -628,7 +636,7 @@ public class KeyBoardView extends LinearLayout {
     }
 
     public final void changeToNumberKeyBoard() {
-        setKeyBoardType(KeyUtils.TYPE_NUMBER);
+        setKeyBoardType(getNumberKeyBoardType());
         createKeys();
         if (getTranslationY() > 0) {
             ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), 0).setDuration(300).start();
@@ -705,7 +713,7 @@ public class KeyBoardView extends LinearLayout {
             case InputType.TYPE_CLASS_NUMBER:
             case InputType.TYPE_CLASS_PHONE:
             case InputType.TYPE_CLASS_DATETIME:
-                show(KeyUtils.TYPE_NUMBER);
+                show(getNumberKeyBoardType());
                 break;
             default:
                 show(showNumberKeys ? KeyUtils.TYPE_LETTER_NUMBER : KeyUtils.TYPE_LETTER);
@@ -733,7 +741,8 @@ public class KeyBoardView extends LinearLayout {
     private void show(@KeyUtils.KeyBoardType String keyBoardType) {
         if (!this.keyBoardType.equals(keyBoardType)) {
             switch (keyBoardType) {
-                case KeyUtils.TYPE_NUMBER:
+                case KeyUtils.TYPE_HORIZONTAL_NUMBER:
+                case KeyUtils.TYPE_NINE_PALACE_NUMBER:
                     changeToNumberKeyBoard();
                     break;
                 case KeyUtils.TYPE_LETTER:
@@ -771,6 +780,29 @@ public class KeyBoardView extends LinearLayout {
     public void hideIfNecessary() {
         if (getFocusedEditText() == null)
             hide();
+    }
+
+    public String getNumberKeyBoardType() {
+        return numberKeyBoardType;
+    }
+
+    /**
+     * @param numberKeyBoardType one of {@link KeyUtils#TYPE_HORIZONTAL_NUMBER、{@link KeyUtils#TYPE_NINE_PALACE_NUMBER
+     */
+    public void setNumberKeyBoardType(@KeyUtils.KeyBoardType String numberKeyBoardType) {
+        if (KeyUtils.TYPE_HORIZONTAL_NUMBER.equals(numberKeyBoardType)
+                || KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(numberKeyBoardType))
+            this.numberKeyBoardType = numberKeyBoardType;
+        else
+            throw new IllegalArgumentException("Must be one of TYPE_HORIZONTAL_NUMBER、TYPE_NINE_PALACE_NUMBER.");
+    }
+
+    public boolean isSupportMoving() {
+        return supportMoving;
+    }
+
+    public void setSupportMoving(boolean supportMoving) {
+        this.supportMoving = supportMoving;
     }
 
     public void setNumberKeyTextSize(float textDpSize) {

@@ -31,6 +31,8 @@ public class KeyboardFragment extends BaseFragment implements View.OnClickListen
         View root = inflater.inflate(R.layout.fragment_keyboard, container, false);
         keyboardView = new KeyBoardView(root.getContext());
         keyboardView.addAllInputView(root);
+        keyboardView.setNumberKeyBoardType(KeyUtils.TYPE_HORIZONTAL_NUMBER);
+        keyboardView.setSupportMoving(false);
         KeyUtils.init(getActivity().getWindow(), keyboardView);
 
         root.findViewById(R.id.btn_toggle).setOnClickListener(this);
