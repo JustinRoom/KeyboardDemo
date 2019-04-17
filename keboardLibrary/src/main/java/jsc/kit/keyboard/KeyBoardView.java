@@ -852,18 +852,15 @@ public class KeyBoardView extends LinearLayout {
     public SparseArray<KeyView> resetKeys() {
         size[0] = 0;
         size[1] = 0;
-        int count = viewSparseArray.size();
-        SparseArray<KeyView> cache = new SparseArray<>(count);
-        for (int i = 0; i < count; i++) {
-            int key = viewSparseArray.keyAt(i);
-            KeyView child = viewSparseArray.get(key);
-            ViewParent parent = child.getParent();
-            if (parent instanceof ViewGroup)
-                ((ViewGroup) parent).removeView(child);
-            cache.put(key, child);
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            if (child instanceof ViewGroup) {
+                ((ViewGroup) child).removeAllViews();
+            }
         }
-        viewSparseArray.clear();
         removeAllViews();
+        SparseArray<KeyView> cache = viewSparseArray.clone();
+        viewSparseArray.clear();
         return cache;
     }
 
