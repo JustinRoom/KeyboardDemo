@@ -208,7 +208,6 @@ public class KeyUtils {
         if (ninePalaceNumberKeys.isEmpty()) {
             //第一行
             List<KeyBean> keys0 = new ArrayList<>();
-            keys0.add(keys.get(KEY_SCALE));
             keys0.add(keys.get(KEY_1));
             keys0.add(keys.get(KEY_2));
             keys0.add(keys.get(KEY_3));
@@ -216,7 +215,6 @@ public class KeyUtils {
             ninePalaceNumberKeys.add(keys0);
             //第二行
             List<KeyBean> keys1 = new ArrayList<>();
-            keys1.add(keys.get(KEY_SIGNED));
             keys1.add(keys.get(KEY_4));
             keys1.add(keys.get(KEY_5));
             keys1.add(keys.get(KEY_6));
@@ -224,7 +222,6 @@ public class KeyUtils {
             ninePalaceNumberKeys.add(keys1);
             //第三行
             List<KeyBean> keys2 = new ArrayList<>();
-            keys2.add(keys.get(KEY_DOT));
             keys2.add(keys.get(KEY_7));
             keys2.add(keys.get(KEY_8));
             keys2.add(keys.get(KEY_9));
@@ -232,8 +229,7 @@ public class KeyUtils {
             ninePalaceNumberKeys.add(keys2);
             //第四行
             List<KeyBean> keys3 = new ArrayList<>();
-            keys3.add(keys.get(KEY_ABC));
-            keys3.add(createKey(KEY_BLACK, 1.0f));
+            keys3.add(keys.get(KEY_DOT));
             keys3.add(keys.get(KEY_0));
             keys3.add(keys.get(KEY_DELETE));
             ninePalaceNumberKeys.add(keys3);
@@ -413,6 +409,10 @@ public class KeyUtils {
     }
 
     public static void init(Window window, @NonNull KeyBoardView keyboardView) {
+        init(window, keyboardView, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+    }
+
+    public static void init(Window window, @NonNull KeyBoardView keyboardView, int gravity) {
         if (window == null)
             return;
 
@@ -422,7 +422,7 @@ public class KeyUtils {
         View view = window.getDecorView();
         if (view instanceof FrameLayout) {
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+            params.gravity = gravity;
             FrameLayout decorView = (FrameLayout) view;
             decorView.addView(keyboardView, params);
             keyboardView.setVisibility(View.GONE);

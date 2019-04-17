@@ -331,7 +331,7 @@ public class KeyBoardView extends LinearLayout {
                 column = 12;
                 break;
             case KeyUtils.TYPE_NINE_PALACE_NUMBER:
-                column = 5;
+                column = 4;
                 break;
         }
         size[0] = keyWidth * column + (column + 1) * keySpace;
