@@ -9,7 +9,6 @@ import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -100,11 +99,14 @@ public class KeyBoardView extends LinearLayout {
     private @KeyUtils.KeyBoardType
     String numberKeyBoardType;
     //键盘类型。目前只支持三种：数字键盘、字母键盘、数字+字混合键盘
-    private String keyBoardType = "";
+    private @KeyUtils.KeyBoardType
+    String keyBoardType;
     //是否为大写模式
     private boolean upperCase = false;
     //当键盘类型为数字+字混合键盘时，是否显示数字按键
     private boolean showNumberKeys = false;
+    //创建按键时监听
+    private onCreateKeyListener createKeyListener = null;
     //键盘的显隐监听
     private OnKeyBoardListener keyBoardListener = null;
     //自定义的按键监听
@@ -287,6 +289,10 @@ public class KeyBoardView extends LinearLayout {
         return focusedEditText;
     }
 
+    public String getKeyBoardType() {
+        return keyBoardType;
+    }
+
     private void setKeyBoardType(@KeyUtils.KeyBoardType String keyBoardType) {
         this.keyBoardType = keyBoardType;
         if (keyBoardType.equals(KeyUtils.TYPE_LETTER_NUMBER)) {
@@ -321,10 +327,10 @@ public class KeyBoardView extends LinearLayout {
      */
     private void createKeys() {
         final SparseArray<KeyView> cache = resetKeys();
-        List<List<KeyBean>> keys = KeyUtils.loadKeys(keyBoardType);
+        List<List<KeyBean>> keys = KeyUtils.loadKeys(getKeyBoardType());
         int row = keys.size();
         int column = 0;
-        switch (keyBoardType) {
+        switch (getKeyBoardType()) {
             case KeyUtils.TYPE_LETTER:
             case KeyUtils.TYPE_LETTER_NUMBER:
                 column = 11;
@@ -383,12 +389,18 @@ public class KeyBoardView extends LinearLayout {
     }
 
     private float getKeyTextSize(int key) {
-        if (KeyUtils.isNumberKey(key)
-                || KeyUtils.isLetterKey(key))
-            return 18;
-        if (key == KeyUtils.KEY_AA)
-            return 16;
-        return 14;
+        float textSize = createKeyListener == null ? 0 : createKeyListener.getKeyTextSize(getKeyBoardType(), key);
+        if (textSize > 0)
+            return textSize;
+        if (KeyUtils.isNumberKey(key)) {
+            textSize = 18;
+        } else if (KeyUtils.isLetterKey(key)
+                || key == KeyUtils.KEY_AA) {
+            textSize = 16;
+        } else {
+            textSize = 14;
+        }
+        return textSize;
     }
 
     private int getKeyBackground(int key) {
@@ -631,13 +643,13 @@ public class KeyBoardView extends LinearLayout {
     }
 
     public final void toggleNumberKeys() {
-        if (keyBoardType.equals(KeyUtils.TYPE_LETTER_NUMBER)) {
+        if (KeyUtils.TYPE_LETTER_NUMBER.equals(getKeyBoardType())) {
             setKeyBoardType(KeyUtils.TYPE_LETTER);
             createKeys();
             showNumberKeys = false;
             return;
         }
-        if (keyBoardType.equals(KeyUtils.TYPE_LETTER)) {
+        if (KeyUtils.TYPE_LETTER.equals(getKeyBoardType())) {
             setKeyBoardType(KeyUtils.TYPE_LETTER_NUMBER);
             createKeys();
             showNumberKeys = true;
@@ -650,6 +662,10 @@ public class KeyBoardView extends LinearLayout {
         if (getTranslationY() > 0) {
             ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), 0).setDuration(300).start();
         }
+    }
+
+    public void setCreateKeyListener(onCreateKeyListener createKeyListener) {
+        this.createKeyListener = createKeyListener;
     }
 
     public void setKeyBoardListener(OnKeyBoardListener keyBoardListener) {
@@ -748,7 +764,7 @@ public class KeyBoardView extends LinearLayout {
     }
 
     private void show(@KeyUtils.KeyBoardType String keyBoardType) {
-        if (!this.keyBoardType.equals(keyBoardType)) {
+        if (!keyBoardType.equals(getKeyBoardType())) {
             switch (keyBoardType) {
                 case KeyUtils.TYPE_HORIZONTAL_NUMBER:
                 case KeyUtils.TYPE_NINE_PALACE_NUMBER:
@@ -814,50 +830,6 @@ public class KeyBoardView extends LinearLayout {
         this.supportMoving = supportMoving;
     }
 
-    public void setNumberKeyTextSize(float textDpSize) {
-        ensureInitialized();
-        for (int i = KeyUtils.KEY_0; i <= KeyUtils.KEY_9; i++) {
-            setKeyTextSize(i, textDpSize);
-        }
-    }
-
-    public void setNumberKeyBackground(@DrawableRes int background) {
-        ensureInitialized();
-        for (int i = KeyUtils.KEY_0; i <= KeyUtils.KEY_9; i++) {
-            setKeyBackground(i, background);
-        }
-    }
-
-    public void setLetterKeyTextSize(float textDpSize) {
-        ensureInitialized();
-        for (int i = KeyUtils.KEY_A; i <= KeyUtils.KEY_Z; i++) {
-            setKeyTextSize(i, textDpSize);
-        }
-    }
-
-    public void setLetterKeyBackground(@DrawableRes int background) {
-        ensureInitialized();
-        for (int i = KeyUtils.KEY_A; i <= KeyUtils.KEY_Z; i++) {
-            setKeyBackground(i, background);
-        }
-    }
-
-    public void setKeyTextSize(int key, float textDpSize) {
-        ensureInitialized();
-        KeyView view = viewSparseArray.get(key);
-        if (view != null) {
-            view.getTextKeyView().setTextSize(TypedValue.COMPLEX_UNIT_DIP, textDpSize);
-        }
-    }
-
-    public void setKeyBackground(@KeyUtils.Key int key, @DrawableRes int background) {
-        ensureInitialized();
-        KeyView view = viewSparseArray.get(key);
-        if (view != null) {
-            view.getTextKeyView().setBackgroundResource(background);
-        }
-    }
-
     public SparseArray<KeyView> resetKeys() {
         size[0] = 0;
         size[1] = 0;
@@ -908,6 +880,16 @@ public class KeyBoardView extends LinearLayout {
 
     public interface OnKeyDownListener {
         boolean onKeyDown(KeyBoardView keyBoardView, KeyView keyView);
+    }
+
+    public interface onCreateKeyListener {
+        /**
+         *
+         * @param keyboardType current keyboard type
+         * @param key the key of view was creating
+         * @return label text sie. It's unit is dp.
+         */
+        float getKeyTextSize(@KeyUtils.KeyBoardType String keyboardType, @KeyUtils.Key int key);
     }
 
     private class CusAnimatorListener implements Animator.AnimatorListener {

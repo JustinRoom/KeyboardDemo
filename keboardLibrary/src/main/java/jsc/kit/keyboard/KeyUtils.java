@@ -229,13 +229,15 @@ public class KeyUtils {
             ninePalaceNumberKeys.add(keys2);
             //第四行
             List<KeyBean> keys3 = new ArrayList<>();
-            keys3.add(keys.get(KEY_DOT));
+            keys3.add(keys.get(KEY_ABC));
             keys3.add(keys.get(KEY_0));
+            keys3.add(keys.get(KEY_DOT));
             keys3.add(keys.get(KEY_DELETE));
             ninePalaceNumberKeys.add(keys3);
         }
+        updateHorizontalWeight(KEY_ABC, 1.0f);
         updateHorizontalWeight(KEY_NEXT, 1.0f);
-        updateHorizontalWeight(KEY_DELETE, 2.0f);
+        updateHorizontalWeight(KEY_DELETE, 1.0f);
         return ninePalaceNumberKeys;
     }
 

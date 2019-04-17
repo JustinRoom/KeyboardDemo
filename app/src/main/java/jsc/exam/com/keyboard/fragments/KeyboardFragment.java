@@ -34,6 +34,17 @@ public class KeyboardFragment extends BaseFragment implements View.OnClickListen
         keyboardView.addAllInputView(root);
 //        keyboardView.setNumberKeyBoardType(KeyUtils.TYPE_HORIZONTAL_NUMBER);
 //        keyboardView.setSupportMoving(false);
+        keyboardView.setCreateKeyListener(new KeyBoardView.onCreateKeyListener() {
+            @Override
+            public float getKeyTextSize(String keyboardType, int key) {
+                if (KeyUtils.isNumberKey(key))
+                    return 20;
+                if (KeyUtils.isLetterKey(key)
+                        || key == KeyUtils.KEY_AA)
+                    return 18;
+                return 14;
+            }
+        });
         KeyUtils.init(getActivity().getWindow(), keyboardView, Gravity.BOTTOM | Gravity.END);
 
         root.findViewById(R.id.btn_toggle).setOnClickListener(this);
