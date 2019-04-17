@@ -43,6 +43,7 @@ import java.util.List;
    See the License for the specific language governing permissions and
    limitations under the License.
 */
+
 /**
  * <br>Email:1006368252@qq.com
  * <br>QQ:1006368252
@@ -403,6 +404,7 @@ public class KeyBoardView extends LinearLayout {
 
     private void dispatchKeyDownEvent(KeyView keyView) {
 //        playClickSound();
+        playClickAnimation(keyView);
         boolean needExecuteDefaultKeyDownEvent = keyDownListener == null || !keyDownListener.onKeyDown(this, keyView);
         if (!needExecuteDefaultKeyDownEvent)
             return;
@@ -530,6 +532,22 @@ public class KeyBoardView extends LinearLayout {
         AudioManager audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         if (audioManager != null)
             audioManager.playSoundEffect(SoundEffectConstants.CLICK);
+    }
+
+    private void playClickAnimation(KeyView keyView) {
+        int key = keyView.getBean().getKey();
+        if (KeyUtils.isNumberKey(key)
+                || KeyUtils.isLetterKey(key)
+                || key == KeyUtils.KEY_DOT
+                || key == KeyUtils.KEY_SIGNED) {
+            float scaleX = keyView.getScaleX();
+            float scaleY = keyView.getScaleY();
+            ObjectAnimator.ofPropertyValuesHolder(
+                    keyView,
+                    PropertyValuesHolder.ofFloat(View.SCALE_X, scaleX, scaleX * 1.2f, scaleX),
+                    PropertyValuesHolder.ofFloat(View.SCALE_Y, scaleY, scaleY * 1.2f, scaleY)
+            ).setDuration(200).start();
+        }
     }
 
     public final void toggleUpperCase() {

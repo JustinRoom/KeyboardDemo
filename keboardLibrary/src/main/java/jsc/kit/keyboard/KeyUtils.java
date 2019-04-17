@@ -59,6 +59,7 @@ public class KeyUtils {
     public static final int KEY_123 = 0x109;
     public static final int KEY_AA = 0x110;
     public static final int KEY_NUM = 0x111;
+    public static final int KEY_ENTER = 0x112;
     //letter
     public static final int KEY_A = 0x2000;
     public static final int KEY_B = 0x2001;
@@ -94,7 +95,7 @@ public class KeyUtils {
             KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I,KEY_J,//letter
             KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T,
             KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z,
-            KEY_CLOSE, KEY_SCALE, KEY_ABC, KEY_DELETE, KEY_DOT, KEY_NEXT, KEY_SIGNED, KEY_SPACE, KEY_123, KEY_AA, KEY_NUM ,//special
+            KEY_CLOSE, KEY_SCALE, KEY_ABC, KEY_DELETE, KEY_DOT, KEY_NEXT, KEY_SIGNED, KEY_SPACE, KEY_123, KEY_AA, KEY_NUM, KEY_ENTER,//special
             KEY_BLANK, KEY_BLACK//not key
     })
     @Retention(RetentionPolicy.SOURCE)
@@ -128,6 +129,7 @@ public class KeyUtils {
         keys.put(KEY_123, new KeyBean(KEY_123, "123?", ""));
         keys.put(KEY_AA, new KeyBean(KEY_AA, "Aa", ""));
         keys.put(KEY_NUM, new KeyBean(KEY_NUM, "Num", ""));
+        keys.put(KEY_ENTER, new KeyBean(KEY_ENTER, "Enter", "\r"));
         //letter
         keys.put(KEY_A, new KeyBean(KEY_A, "a"));
         keys.put(KEY_B, new KeyBean(KEY_B, "b"));

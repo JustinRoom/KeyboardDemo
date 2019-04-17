@@ -35,11 +35,6 @@ public class KeyView extends FrameLayout {
         ivKey = findViewById(R.id.iv_key);
     }
 
-    @Override
-    public boolean performClick() {
-        return super.performClick();
-    }
-
     public KeyBean getBean() {
         return bean;
     }
