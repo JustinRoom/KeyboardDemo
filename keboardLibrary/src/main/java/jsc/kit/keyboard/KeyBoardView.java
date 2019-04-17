@@ -124,7 +124,7 @@ public class KeyBoardView extends LinearLayout {
     public KeyBoardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setOrientation(VERTICAL);
-        int defaultKeyWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 44, context.getResources().getDisplayMetrics());
+        int defaultKeyWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, context.getResources().getDisplayMetrics());
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.KeyBoardView, defStyleAttr, 0);
         int keyWidth = a.getDimensionPixelSize(R.styleable.KeyBoardView_keyWidth, defaultKeyWidth);
         int keyHeight = a.getDimensionPixelSize(R.styleable.KeyBoardView_keyHeight, 0);
@@ -335,8 +335,8 @@ public class KeyBoardView extends LinearLayout {
             column++;
             maxWeight = column;
         }
-        size[0] = keyWidth * column + (column + 1) * keySpace;
-        size[1] = keyHeight * row + (row + 1) * keySpace;
+        size[0] = keyWidth * column + (column + 1) * 2 * keySpace;
+        size[1] = keyHeight * row + (row + 1) * 2 * keySpace;
         for (int i = 0; i < row; i++) {
             List<KeyBean> tempKeys = keys.get(i);
             LinearLayout layout = new LinearLayout(getContext());

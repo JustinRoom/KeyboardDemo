@@ -40,8 +40,9 @@ public class KeyboardFragment extends BaseFragment implements View.OnClickListen
                 if (KeyUtils.isNumberKey(key))
                     return 20;
                 if (KeyUtils.isLetterKey(key)
-                        || key == KeyUtils.KEY_AA)
-                    return 18;
+                        || key == KeyUtils.KEY_AA
+                        || key == KeyUtils.KEY_123)
+                    return 16;
                 return 14;
             }
         });
