@@ -124,15 +124,17 @@ public class KeyBoardView extends LinearLayout {
     public KeyBoardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setOrientation(VERTICAL);
-        int defaultKeyWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, context.getResources().getDisplayMetrics());
+        setBackgroundResource(R.drawable.key_keyboard_background_shape);
+        int defaultKeyWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, context.getResources().getDisplayMetrics());
+        int defaultKeySpace = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, context.getResources().getDisplayMetrics());
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.KeyBoardView, defStyleAttr, 0);
         int keyWidth = a.getDimensionPixelSize(R.styleable.KeyBoardView_keyWidth, defaultKeyWidth);
         int keyHeight = a.getDimensionPixelSize(R.styleable.KeyBoardView_keyHeight, 0);
-        int keySpace = a.getDimensionPixelSize(R.styleable.KeyBoardView_keySpace, 5);
+        int keySpace = a.getDimensionPixelSize(R.styleable.KeyBoardView_keySpace, defaultKeySpace);
         int boardType = a.getInt(R.styleable.KeyBoardView_keyBoardType, 0);
         a.recycle();
         if (keyHeight <= 0)
-            keyHeight = keyWidth * 3 / 4;
+            keyHeight = keyWidth * 3 / 5;
         initKeyBoard(keyWidth, keyHeight, keySpace);
         setNumberKeyBoardType(KeyUtils.TYPE_NINE_PALACE_NUMBER);
         if (isInEditMode())
@@ -303,7 +305,8 @@ public class KeyBoardView extends LinearLayout {
     }
 
     public void initKeyBoard(int keyWidth) {
-        initKeyBoard(keyWidth, keyWidth * 3 / 4, 5);
+        int defaultKeySpace = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getContext().getResources().getDisplayMetrics());
+        initKeyBoard(keyWidth, keyWidth * 3 / 5, defaultKeySpace);
     }
 
     public void initKeyBoard(int keyWidth, int keyHeight, int space) {
@@ -395,26 +398,11 @@ public class KeyBoardView extends LinearLayout {
     }
 
     private float getKeyTextSize(int key) {
-        float textSize = createKeyListener == null ? 0 : createKeyListener.getKeyTextSize(getKeyBoardType(), key);
-        if (textSize > 0)
-            return textSize;
-        if (KeyUtils.isNumberKey(key)) {
-            textSize = 18;
-        } else if (KeyUtils.isLetterKey(key)
-                || key == KeyUtils.KEY_AA) {
-            textSize = 16;
-        } else {
-            textSize = 14;
-        }
-        return textSize;
+        return createKeyListener == null ? 16 : createKeyListener.getKeyTextSize(getKeyBoardType(), key);
     }
 
     private int getKeyBackground(int key) {
-        if (key == KeyUtils.KEY_ABC
-                || key == KeyUtils.KEY_AA
-                || key == KeyUtils.KEY_123
-                || key == KeyUtils.KEY_DELETE
-                || key == KeyUtils.KEY_NEXT)
+        if (KeyUtils.isSpecialKey(key))
             return R.drawable.key_special_key_background_ripple;
         return R.drawable.key_normal_key_background_ripple;
     }

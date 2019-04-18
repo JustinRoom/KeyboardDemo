@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,18 +33,18 @@ public class KeyboardFragment extends BaseFragment implements View.OnClickListen
         keyboardView.addAllInputView(root);
 //        keyboardView.setNumberKeyBoardType(KeyUtils.TYPE_HORIZONTAL_NUMBER);
 //        keyboardView.setSupportMoving(false);
-        keyboardView.setCreateKeyListener(new KeyBoardView.onCreateKeyListener() {
-            @Override
-            public float getKeyTextSize(String keyboardType, int key) {
-                if (KeyUtils.isNumberKey(key))
-                    return 20;
-                if (KeyUtils.isLetterKey(key)
-                        || key == KeyUtils.KEY_AA
-                        || key == KeyUtils.KEY_123)
-                    return 16;
-                return 14;
-            }
-        });
+//        keyboardView.setCreateKeyListener(new KeyBoardView.onCreateKeyListener() {
+//            @Override
+//            public float getKeyTextSize(String keyboardType, int key) {
+//                if (KeyUtils.isNumberKey(key))
+//                    return 20;
+//                if (KeyUtils.isLetterKey(key)
+//                        || key == KeyUtils.KEY_AA
+//                        || key == KeyUtils.KEY_123)
+//                    return 16;
+//                return 14;
+//            }
+//        });
         KeyUtils.init(getActivity(), keyboardView);
 
         root.findViewById(R.id.btn_toggle).setOnClickListener(this);

@@ -124,8 +124,8 @@ public class KeyUtils {
         putKey(new KeyBean(KEY_SIGNED, "-", "-"));
         putKey(new KeyBean(KEY_DOT, "•", "."));
         putKey(new KeyBean(KEY_ABC, "ABC"));
-        putKey(new KeyBean(KEY_SCALE, "Scale", "", R.drawable.key_ico_move));
-        putKey(new KeyBean(KEY_CLOSE, "Close", "", R.drawable.key_ico_close));
+        putKey(new KeyBean(KEY_SCALE, "Scale", "", R.drawable.key_icon_scale));
+        putKey(new KeyBean(KEY_CLOSE, "Close", "", R.drawable.key_icon_close));
         putKey(new KeyBean(KEY_DELETE, "Delete", "", R.drawable.key_icon_del));
         putKey(new KeyBean(KEY_NEXT, KEY_LABEL_NEXT, ""));
         putKey(new KeyBean(KEY_SPACE, "Space", "\u2000"));
@@ -409,6 +409,17 @@ public class KeyUtils {
 
     public static boolean isLetterKey(@KeyCode int key) {
         return key >= KeyUtils.KEY_A && key <= KeyUtils.KEY_Z;
+    }
+
+    public static boolean isSpecialKey(@KeyCode int key) {
+        if (key == KeyUtils.KEY_ABC
+                || key == KeyUtils.KEY_SCALE
+                || key == KeyUtils.KEY_AA
+                || key == KeyUtils.KEY_123
+                || key == KeyUtils.KEY_DELETE
+                || key == KeyUtils.KEY_NEXT)
+            return true;
+        return false;
     }
 
     public static boolean isNotKey(@KeyCode int key) {
