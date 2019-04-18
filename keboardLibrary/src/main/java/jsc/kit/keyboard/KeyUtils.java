@@ -5,7 +5,6 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
-import android.support.v4.app.Fragment;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
@@ -102,7 +101,7 @@ public class KeyUtils {
             KEY_BLANK, KEY_BLACK//not key
     })
     @Retention(RetentionPolicy.SOURCE)
-    public @interface Key{}
+    public @interface KeyCode {}
     private static SparseArray<KeyBean> keys = new SparseArray<>();
     private static List<List<KeyBean>> horizontalNumberKeys = new ArrayList<>();
     private static List<List<KeyBean>> ninePalaceNumberKeys = new ArrayList<>();
@@ -111,56 +110,60 @@ public class KeyUtils {
 
     static {
         //number
-        keys.put(KEY_0, new KeyBean(KEY_0, "0"));
-        keys.put(KEY_1, new KeyBean(KEY_1, "1"));
-        keys.put(KEY_2, new KeyBean(KEY_2, "2"));
-        keys.put(KEY_3, new KeyBean(KEY_3, "3"));
-        keys.put(KEY_4, new KeyBean(KEY_4, "4"));
-        keys.put(KEY_5, new KeyBean(KEY_5, "5"));
-        keys.put(KEY_6, new KeyBean(KEY_6, "6"));
-        keys.put(KEY_7, new KeyBean(KEY_7, "7"));
-        keys.put(KEY_8, new KeyBean(KEY_8, "8"));
-        keys.put(KEY_9, new KeyBean(KEY_9, "9"));
+        putKey(new KeyBean(KEY_0, "0"));
+        putKey(new KeyBean(KEY_1, "1"));
+        putKey(new KeyBean(KEY_2, "2"));
+        putKey(new KeyBean(KEY_3, "3"));
+        putKey(new KeyBean(KEY_4, "4"));
+        putKey(new KeyBean(KEY_5, "5"));
+        putKey(new KeyBean(KEY_6, "6"));
+        putKey(new KeyBean(KEY_7, "7"));
+        putKey(new KeyBean(KEY_8, "8"));
+        putKey(new KeyBean(KEY_9, "9"));
         //character
-        keys.put(KEY_SIGNED, new KeyBean(KEY_SIGNED, "-", "-"));
-        keys.put(KEY_DOT, new KeyBean(KEY_DOT, "•", "."));
-        keys.put(KEY_ABC, new KeyBean(KEY_ABC, "ABC"));
-        keys.put(KEY_SCALE, new KeyBean(KEY_SCALE, "Scale", "", R.drawable.key_ico_move));
-        keys.put(KEY_CLOSE, new KeyBean(KEY_CLOSE, "Close", "", R.drawable.key_ico_close));
-        keys.put(KEY_DELETE, new KeyBean(KEY_DELETE, "Delete", "", R.drawable.key_icon_del));
-        keys.put(KEY_NEXT, new KeyBean(KEY_NEXT, KEY_LABEL_NEXT, ""));
-        keys.put(KEY_SPACE, new KeyBean(KEY_SPACE, "Space", "\u2000"));
-        keys.put(KEY_123, new KeyBean(KEY_123, "123?", ""));
-        keys.put(KEY_AA, new KeyBean(KEY_AA, "Aa", ""));
-        keys.put(KEY_NUM, new KeyBean(KEY_NUM, "Num", ""));
-        keys.put(KEY_ENTER, new KeyBean(KEY_ENTER, "Enter", "\r"));
+        putKey(new KeyBean(KEY_SIGNED, "-", "-"));
+        putKey(new KeyBean(KEY_DOT, "•", "."));
+        putKey(new KeyBean(KEY_ABC, "ABC"));
+        putKey(new KeyBean(KEY_SCALE, "Scale", "", R.drawable.key_ico_move));
+        putKey(new KeyBean(KEY_CLOSE, "Close", "", R.drawable.key_ico_close));
+        putKey(new KeyBean(KEY_DELETE, "Delete", "", R.drawable.key_icon_del));
+        putKey(new KeyBean(KEY_NEXT, KEY_LABEL_NEXT, ""));
+        putKey(new KeyBean(KEY_SPACE, "Space", "\u2000"));
+        putKey(new KeyBean(KEY_123, "123?", ""));
+        putKey(new KeyBean(KEY_AA, "Aa", ""));
+        putKey(new KeyBean(KEY_NUM, "Num", ""));
+        putKey(new KeyBean(KEY_ENTER, "Enter", "\r"));
         //letter
-        keys.put(KEY_A, new KeyBean(KEY_A, "a"));
-        keys.put(KEY_B, new KeyBean(KEY_B, "b"));
-        keys.put(KEY_C, new KeyBean(KEY_C, "c"));
-        keys.put(KEY_D, new KeyBean(KEY_D, "d"));
-        keys.put(KEY_E, new KeyBean(KEY_E, "e"));
-        keys.put(KEY_F, new KeyBean(KEY_F, "f"));
-        keys.put(KEY_G, new KeyBean(KEY_G, "g"));
-        keys.put(KEY_H, new KeyBean(KEY_H, "h"));
-        keys.put(KEY_I, new KeyBean(KEY_I, "i"));
-        keys.put(KEY_J, new KeyBean(KEY_J, "j"));
-        keys.put(KEY_K, new KeyBean(KEY_K, "k"));
-        keys.put(KEY_L, new KeyBean(KEY_L, "l"));
-        keys.put(KEY_M, new KeyBean(KEY_M, "m"));
-        keys.put(KEY_N, new KeyBean(KEY_N, "n"));
-        keys.put(KEY_O, new KeyBean(KEY_O, "o"));
-        keys.put(KEY_P, new KeyBean(KEY_P, "p"));
-        keys.put(KEY_Q, new KeyBean(KEY_Q, "q"));
-        keys.put(KEY_R, new KeyBean(KEY_R, "r"));
-        keys.put(KEY_S, new KeyBean(KEY_S, "s"));
-        keys.put(KEY_T, new KeyBean(KEY_T, "t"));
-        keys.put(KEY_U, new KeyBean(KEY_U, "u"));
-        keys.put(KEY_V, new KeyBean(KEY_V, "v"));
-        keys.put(KEY_W, new KeyBean(KEY_W, "w"));
-        keys.put(KEY_X, new KeyBean(KEY_X, "x"));
-        keys.put(KEY_Y, new KeyBean(KEY_Y, "y"));
-        keys.put(KEY_Z, new KeyBean(KEY_Z, "z"));
+        putKey(new KeyBean(KEY_A, "a"));
+        putKey(new KeyBean(KEY_B, "b"));
+        putKey(new KeyBean(KEY_C, "c"));
+        putKey(new KeyBean(KEY_D, "d"));
+        putKey(new KeyBean(KEY_E, "e"));
+        putKey(new KeyBean(KEY_F, "f"));
+        putKey(new KeyBean(KEY_G, "g"));
+        putKey(new KeyBean(KEY_H, "h"));
+        putKey(new KeyBean(KEY_I, "i"));
+        putKey(new KeyBean(KEY_J, "j"));
+        putKey(new KeyBean(KEY_K, "k"));
+        putKey(new KeyBean(KEY_L, "l"));
+        putKey(new KeyBean(KEY_M, "m"));
+        putKey(new KeyBean(KEY_N, "n"));
+        putKey(new KeyBean(KEY_O, "o"));
+        putKey(new KeyBean(KEY_P, "p"));
+        putKey(new KeyBean(KEY_Q, "q"));
+        putKey(new KeyBean(KEY_R, "r"));
+        putKey(new KeyBean(KEY_S, "s"));
+        putKey(new KeyBean(KEY_T, "t"));
+        putKey(new KeyBean(KEY_U, "u"));
+        putKey(new KeyBean(KEY_V, "v"));
+        putKey(new KeyBean(KEY_W, "w"));
+        putKey(new KeyBean(KEY_X, "x"));
+        putKey(new KeyBean(KEY_Y, "y"));
+        putKey(new KeyBean(KEY_Z, "z"));
+    }
+
+    private static void putKey(@NonNull KeyBean keyBean){
+        keys.put(keyBean.getKey(), keyBean);
     }
 
     public static List<List<KeyBean>> loadKeys(String inputType) {
@@ -376,39 +379,39 @@ public class KeyUtils {
         return letterNumberKeys;
     }
 
-    public static void updateHorizontalWeight(@Key int key, float weight) {
+    public static void updateHorizontalWeight(@KeyCode int key, float weight) {
         KeyBean bean = keys.get(key);
         bean.setHorizontalWeight(weight);
     }
 
-    public static KeyBean createKey(@Key int key, float horizontalWeight) {
+    public static KeyBean createKey(@KeyCode int key, float horizontalWeight) {
         return createKey(key, "", "", -1, horizontalWeight);
     }
 
-    public static KeyBean createKey(@Key int key, CharSequence label, CharSequence value, int drawable, float horizontalWeight) {
+    public static KeyBean createKey(@KeyCode int key, CharSequence label, CharSequence value, int drawable, float horizontalWeight) {
         return new KeyBean(key, label, value, drawable, horizontalWeight);
     }
 
     @Nullable
-    public static KeyBean findKey(@Key int key) {
+    public static KeyBean findKey(@KeyCode int key) {
         return keys.get(key);
     }
 
-    public static boolean isClickableKey(@Key int key) {
+    public static boolean isClickableKey(@KeyCode int key) {
         if (isNotKey(key))
             return false;
         return true;
     }
 
-    public static boolean isNumberKey(@Key int key) {
+    public static boolean isNumberKey(@KeyCode int key) {
         return key >= KeyUtils.KEY_0 && key <= KeyUtils.KEY_9;
     }
 
-    public static boolean isLetterKey(@Key int key) {
+    public static boolean isLetterKey(@KeyCode int key) {
         return key >= KeyUtils.KEY_A && key <= KeyUtils.KEY_Z;
     }
 
-    public static boolean isNotKey(@Key int key) {
+    public static boolean isNotKey(@KeyCode int key) {
         return key >= KeyUtils.KEY_BLANK && key <= KeyUtils.KEY_BLACK;
     }
 

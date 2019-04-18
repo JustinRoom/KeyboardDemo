@@ -894,7 +894,7 @@ public class KeyBoardView extends LinearLayout {
          * @param key          the key of view was creating
          * @return label text sie. It's unit is dp.
          */
-        float getKeyTextSize(@KeyUtils.KeyBoardType String keyboardType, @KeyUtils.Key int key);
+        float getKeyTextSize(@KeyUtils.KeyBoardType String keyboardType, @KeyUtils.KeyCode int key);
     }
 
     private class CusAnimatorListener implements Animator.AnimatorListener {
