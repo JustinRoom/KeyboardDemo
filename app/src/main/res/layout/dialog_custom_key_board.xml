@@ -48,7 +48,7 @@
         android:id="@+id/key_board_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:keyBoardType="letterNumber"
+        app:keyBoardType="letter"
         android:layout_gravity="bottom|center_horizontal" />
 
 </FrameLayout>

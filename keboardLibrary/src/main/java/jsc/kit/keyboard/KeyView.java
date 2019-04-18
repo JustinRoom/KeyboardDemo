@@ -1,6 +1,7 @@
 package jsc.kit.keyboard;
 
 import android.content.Context;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
@@ -71,6 +72,13 @@ public class KeyView extends FrameLayout {
         if (bean != null) {
             bean.setLabel(label);
             tvKey.setText(label);
+        }
+    }
+
+    public void updateDrawable(@DrawableRes int drawable){
+        if (bean != null) {
+            bean.setDrawable(drawable);
+            ivKey.setImageResource(drawable);
         }
     }
 

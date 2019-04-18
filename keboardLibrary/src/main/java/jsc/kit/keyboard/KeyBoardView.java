@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.support.annotation.NonNull;
@@ -78,6 +79,8 @@ public class KeyBoardView extends LinearLayout {
             dispatchKeyDownEvent(keyView);
         }
     };
+    //按键字体
+    private Typeface typeface = null;
     //是否支持拖动
     private boolean supportMoving = true;
     //键盘拖动时touch坐标
@@ -313,6 +316,7 @@ public class KeyBoardView extends LinearLayout {
         this.keyWidth = keyWidth;
         this.keyHeight = keyHeight;
         this.keySpace = space;
+        typeface = Typeface.createFromAsset(getContext().getAssets(), "arial_narrow_bold.TTF");
         setPadding(space, space, space, space);
     }
 
@@ -404,6 +408,8 @@ public class KeyBoardView extends LinearLayout {
     private int getKeyBackground(int key) {
         if (KeyUtils.isSpecialKey(key))
             return R.drawable.key_special_key_background_ripple;
+        if (key == KeyUtils.KEY_NEXT)
+            return R.drawable.key_next_key_background_ripple;
         return R.drawable.key_normal_key_background_ripple;
     }
 
@@ -582,7 +588,7 @@ public class KeyBoardView extends LinearLayout {
                 v.updateUpperCase(upperCase);
             }
         }
-        viewSparseArray.get(KeyUtils.KEY_AA).updateLabel(upperCase ? "aA" : "Aa");
+        viewSparseArray.get(KeyUtils.KEY_AA).updateDrawable(upperCase ? R.drawable.key_icon_upper_case : R.drawable.key_icon_lower_case);
     }
 
     public final void autoFocusNextEditText(KeyBean bean) {

@@ -92,16 +92,19 @@ public class KeyUtils {
     //
     public static final int KEY_BLANK = 0x0900;
     public static final int KEY_BLACK = 0x0901;
+
     @IntDef({
             KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9,//number
-            KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I,KEY_J,//letter
+            KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J,//letter
             KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T,
             KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z,
             KEY_CLOSE, KEY_SCALE, KEY_ABC, KEY_DELETE, KEY_DOT, KEY_NEXT, KEY_SIGNED, KEY_SPACE, KEY_123, KEY_AA, KEY_NUM, KEY_ENTER,//special
             KEY_BLANK, KEY_BLACK//not key
     })
     @Retention(RetentionPolicy.SOURCE)
-    public @interface KeyCode {}
+    public @interface KeyCode {
+    }
+
     private static SparseArray<KeyBean> keys = new SparseArray<>();
     private static List<List<KeyBean>> horizontalNumberKeys = new ArrayList<>();
     private static List<List<KeyBean>> ninePalaceNumberKeys = new ArrayList<>();
@@ -130,7 +133,7 @@ public class KeyUtils {
         putKey(new KeyBean(KEY_NEXT, KEY_LABEL_NEXT, ""));
         putKey(new KeyBean(KEY_SPACE, "Space", "\u2000"));
         putKey(new KeyBean(KEY_123, "123?", ""));
-        putKey(new KeyBean(KEY_AA, "Aa", ""));
+        putKey(new KeyBean(KEY_AA, "Aa", "", R.drawable.key_icon_lower_case));
         putKey(new KeyBean(KEY_NUM, "Num", ""));
         putKey(new KeyBean(KEY_ENTER, "Enter", "\r"));
         //letter
@@ -162,7 +165,7 @@ public class KeyUtils {
         putKey(new KeyBean(KEY_Z, "z"));
     }
 
-    private static void putKey(@NonNull KeyBean keyBean){
+    private static void putKey(@NonNull KeyBean keyBean) {
         keys.put(keyBean.getKey(), keyBean);
     }
 
@@ -249,63 +252,64 @@ public class KeyUtils {
     public static List<List<KeyBean>> getLetterKeys() {
         if (letterKeys.isEmpty()) {
             //第一行
-            List<KeyBean> keys1 = new ArrayList<>();
-            keys1.add(keys.get(KEY_Q));
-            keys1.add(keys.get(KEY_W));
-            keys1.add(keys.get(KEY_E));
-            keys1.add(keys.get(KEY_R));
-            keys1.add(keys.get(KEY_T));
-            keys1.add(keys.get(KEY_Y));
-            keys1.add(keys.get(KEY_U));
-            keys1.add(keys.get(KEY_I));
-            keys1.add(keys.get(KEY_O));
-            keys1.add(keys.get(KEY_P));
-            keys1.add(keys.get(KEY_SCALE));
-            letterKeys.add(keys1);
+            List<KeyBean> keys0 = new ArrayList<>();
+            keys0.add(keys.get(KEY_Q));
+            keys0.add(keys.get(KEY_W));
+            keys0.add(keys.get(KEY_E));
+            keys0.add(keys.get(KEY_R));
+            keys0.add(keys.get(KEY_T));
+            keys0.add(keys.get(KEY_Y));
+            keys0.add(keys.get(KEY_U));
+            keys0.add(keys.get(KEY_I));
+            keys0.add(keys.get(KEY_O));
+            keys0.add(keys.get(KEY_P));
+            keys0.add(keys.get(KEY_CLOSE));
+            letterKeys.add(keys0);
             //第二行
-            List<KeyBean> keys2 = new ArrayList<>();
-            keys2.add(createKey(KEY_BLACK, .25f));
-            keys2.add(keys.get(KEY_A));
-            keys2.add(keys.get(KEY_S));
-            keys2.add(keys.get(KEY_D));
-            keys2.add(keys.get(KEY_F));
-            keys2.add(keys.get(KEY_G));
-            keys2.add(keys.get(KEY_H));
-            keys2.add(keys.get(KEY_J));
-            keys2.add(keys.get(KEY_K));
-            keys2.add(keys.get(KEY_L));
-            keys2.add(keys.get(KEY_NUM));
-            keys2.add(keys.get(KEY_CLOSE));
-            letterKeys.add(keys2);
+            List<KeyBean> keys1 = new ArrayList<>();
+            keys1.add(createKey(KEY_BLACK, .25f));
+            keys1.add(keys.get(KEY_A));
+            keys1.add(keys.get(KEY_S));
+            keys1.add(keys.get(KEY_D));
+            keys1.add(keys.get(KEY_F));
+            keys1.add(keys.get(KEY_G));
+            keys1.add(keys.get(KEY_H));
+            keys1.add(keys.get(KEY_J));
+            keys1.add(keys.get(KEY_K));
+            keys1.add(keys.get(KEY_L));
+            keys1.add(keys.get(KEY_NUM));
+            letterKeys.add(keys1);
             //第三行
+            List<KeyBean> keys2 = new ArrayList<>();
+            keys2.add(keys.get(KEY_SIGNED));
+            keys2.add(keys.get(KEY_Z));
+            keys2.add(keys.get(KEY_X));
+            keys2.add(keys.get(KEY_C));
+            keys2.add(keys.get(KEY_V));
+            keys2.add(keys.get(KEY_B));
+            keys2.add(keys.get(KEY_N));
+            keys2.add(keys.get(KEY_M));
+            keys2.add(keys.get(KEY_DOT));
+            keys2.add(keys.get(KEY_DELETE));
+            letterKeys.add(keys2);
+            //第四行
             List<KeyBean> keys3 = new ArrayList<>();
             keys3.add(keys.get(KEY_AA));
-            keys3.add(keys.get(KEY_Z));
-            keys3.add(keys.get(KEY_X));
-            keys3.add(keys.get(KEY_C));
-            keys3.add(keys.get(KEY_V));
-            keys3.add(keys.get(KEY_B));
-            keys3.add(keys.get(KEY_N));
-            keys3.add(keys.get(KEY_M));
-            keys3.add(keys.get(KEY_SIGNED));
+            keys3.add(keys.get(KEY_SPACE));
             keys3.add(keys.get(KEY_NEXT));
             letterKeys.add(keys3);
-            //第四行
-            List<KeyBean> keys4 = new ArrayList<>();
-            keys4.add(keys.get(KEY_123));
-            keys4.add(keys.get(KEY_DOT));
-            keys4.add(keys.get(KEY_SPACE));
-            keys4.add(keys.get(KEY_DELETE));
-            letterKeys.add(keys4);
         }
-        updateHorizontalWeight(KEY_NUM, .75f);
-        updateHorizontalWeight(KEY_NEXT, 2.0f);
-        updateHorizontalWeight(KEY_123, 1.5f);
-        updateHorizontalWeight(KEY_SPACE, 5.50f);
-        updateHorizontalWeight(KEY_DELETE, 3.0f);
+        updateHorizontalWeight(KEY_NUM, 1.75f);
+        updateHorizontalWeight(KEY_SIGNED, 1.25f);
+        updateHorizontalWeight(KEY_DELETE, 1.75f);
+        updateHorizontalWeight(KEY_AA, 1.75f);
+        updateHorizontalWeight(KEY_SPACE, 7.0f);
+        updateHorizontalWeight(KEY_NEXT, 2.25f);
+
+
         return letterKeys;
     }
-    
+
     public static List<List<KeyBean>> getLetterNumberKeys() {
         if (letterNumberKeys.isEmpty()) {
             //第一行
@@ -352,7 +356,7 @@ public class KeyUtils {
             letterNumberKeys.add(keys2);
             //第四行
             List<KeyBean> keys3 = new ArrayList<>();
-            keys3.add(keys.get(KEY_AA));
+            keys3.add(keys.get(KEY_SIGNED));
             keys3.add(keys.get(KEY_Z));
             keys3.add(keys.get(KEY_X));
             keys3.add(keys.get(KEY_C));
@@ -360,22 +364,22 @@ public class KeyUtils {
             keys3.add(keys.get(KEY_B));
             keys3.add(keys.get(KEY_N));
             keys3.add(keys.get(KEY_M));
-            keys3.add(keys.get(KEY_SIGNED));
-            keys3.add(keys.get(KEY_NEXT));
+            keys3.add(keys.get(KEY_DOT));
+            keys3.add(keys.get(KEY_DELETE));
             letterNumberKeys.add(keys3);
             //第五行
             List<KeyBean> keys4 = new ArrayList<>();
-            keys4.add(keys.get(KEY_123));
-            keys4.add(keys.get(KEY_DOT));
+            keys4.add(keys.get(KEY_AA));
             keys4.add(keys.get(KEY_SPACE));
-            keys4.add(keys.get(KEY_DELETE));
+            keys4.add(keys.get(KEY_NEXT));
             letterNumberKeys.add(keys4);
         }
         updateHorizontalWeight(KEY_NUM, 1.75f);
-        updateHorizontalWeight(KEY_NEXT, 2.0f);
-        updateHorizontalWeight(KEY_123, 1.5f);
-        updateHorizontalWeight(KEY_SPACE, 5.50f);
-        updateHorizontalWeight(KEY_DELETE, 3.0f);
+        updateHorizontalWeight(KEY_SIGNED, 1.25f);
+        updateHorizontalWeight(KEY_DELETE, 1.75f);
+        updateHorizontalWeight(KEY_AA, 1.75f);
+        updateHorizontalWeight(KEY_SPACE, 7.0f);
+        updateHorizontalWeight(KEY_NEXT, 2.25f);
         return letterNumberKeys;
     }
 
@@ -416,8 +420,8 @@ public class KeyUtils {
                 || key == KeyUtils.KEY_SCALE
                 || key == KeyUtils.KEY_AA
                 || key == KeyUtils.KEY_123
-                || key == KeyUtils.KEY_DELETE
-                || key == KeyUtils.KEY_NEXT)
+                || key == KeyUtils.KEY_CLOSE
+                || key == KeyUtils.KEY_DELETE)
             return true;
         return false;
     }
