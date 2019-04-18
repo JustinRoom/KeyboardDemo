@@ -1,6 +1,7 @@
 package jsc.kit.keyboard;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -75,11 +76,16 @@ public class KeyView extends FrameLayout {
         }
     }
 
-    public void updateDrawable(@DrawableRes int drawable){
+    public void updateDrawable(@DrawableRes int drawable) {
         if (bean != null) {
             bean.setDrawable(drawable);
             ivKey.setImageResource(drawable);
         }
+    }
+
+    public void setTypeface(Typeface typeface) {
+        if (typeface != null)
+            tvKey.setTypeface(typeface);
     }
 
     public ImageView getImageKeyView() {

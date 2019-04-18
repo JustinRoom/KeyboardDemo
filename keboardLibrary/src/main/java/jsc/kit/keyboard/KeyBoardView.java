@@ -6,6 +6,7 @@ import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.inputmethodservice.KeyboardView;
@@ -316,7 +317,7 @@ public class KeyBoardView extends LinearLayout {
         this.keyWidth = keyWidth;
         this.keyHeight = keyHeight;
         this.keySpace = space;
-        typeface = Typeface.createFromAsset(getContext().getAssets(), "arial_narrow_bold.TTF");
+//        typeface = Typeface.createFromAsset(getContext().getAssets(), "arial_old.ttf");
         setPadding(space, space, space, space);
     }
 
@@ -365,6 +366,8 @@ public class KeyBoardView extends LinearLayout {
         KeyView keyView = cache.get(key);
         if (keyView == null) {
             keyView = new KeyView(getContext());
+            keyView.setTypeface(typeface);
+            keyView.getTextKeyView().setTextColor(getKeyTextColor(key));
             keyView.getTextKeyView().setTextSize(TypedValue.COMPLEX_UNIT_DIP, getKeyTextSize(key));
             keyView.setOnClickListener(clickListener);
             keyView.setOnLongClickListener(key == KeyUtils.KEY_DELETE ? new View.OnLongClickListener() {
@@ -399,6 +402,10 @@ public class KeyBoardView extends LinearLayout {
             maxWeight = Math.max(maxWeight, rowWeightSum);
         }
         return maxWeight;
+    }
+
+    private int getKeyTextColor(@KeyUtils.KeyCode int key) {
+        return key == KeyUtils.KEY_NEXT ? Color.WHITE : 0xFF0A5028;
     }
 
     private float getKeyTextSize(int key) {
