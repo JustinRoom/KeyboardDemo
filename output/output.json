@@ -7,7 +7,7 @@
       "type": "MAIN",
       "splits": [],
       "versionCode": 19,
-      "versionName": "0.0.3",
+      "versionName": "0.0.4",
       "enabled": true,
       "outputFile": "KeyboardDemo.apk",
       "fullName": "release",
