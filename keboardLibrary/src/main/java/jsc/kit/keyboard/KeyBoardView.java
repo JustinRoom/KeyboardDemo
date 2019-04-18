@@ -499,13 +499,13 @@ public class KeyBoardView extends LinearLayout {
 
     private void autoMove() {
         getLocalVisibleRect(rect);
-        int h = rect.height();
+        int h = rect.height() - getPaddingTop();
         int kh = keyHeight + keySpace * 2;
         if (h < size[1] && getTranslationY() > 0) {
             int index = h / kh;
             if (h >= index * kh + kh / 2) index++;
             if (index == 0) index = 1;
-            int yOffset = h - (kh * index + keySpace);
+            int yOffset = h - kh * index;
             if (yOffset != 0) {
                 ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), getTranslationY() + yOffset)
                         .setDuration(300).start();
