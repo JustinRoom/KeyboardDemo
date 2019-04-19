@@ -57,6 +57,8 @@ public class KeyBoardView extends LinearLayout {
     private SparseArray<KeyView> viewSparseArray = new SparseArray<>();
     //按键点击动画管理器。使用此管理器，避免同一个按键点击过快而造成按键的scale混乱。
     private SparseArray<Animator> animatorSparseArray = new SparseArray<>();
+    //滑动松开手指自动滚动到合适的位置
+    private Animator autoReboundAnimator = null;
     //使用该软键盘的输入框管理
     private List<EditText> editTexts = new ArrayList<>(20);
     //当前聚焦的输入框
@@ -159,6 +161,9 @@ public class KeyBoardView extends LinearLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (autoReboundAnimator != null) {
+            autoReboundAnimator.cancel();
+        }
         //如果键盘是被缩小了，则不拦截touch事件
         if (isScaled() || !supportMoving)
             return super.onInterceptTouchEvent(ev);
@@ -221,7 +226,7 @@ public class KeyBoardView extends LinearLayout {
             case MotionEvent.ACTION_CANCEL:
                 if (intoMoveModel && touchedPointerId == event.getPointerId(0)) {
                     //抬起手指时，键盘智能复位
-                    autoMove();
+                    autoRebound();
                     //退出拖动模式
                     intoMoveModel = false;
                     //恢复所有按键可用
@@ -498,7 +503,7 @@ public class KeyBoardView extends LinearLayout {
         setTranslationY(totalY);
     }
 
-    private void autoMove() {
+    private void autoRebound() {
         getLocalVisibleRect(rect);
         int h = rect.height() - getPaddingTop();
         int kh = keyHeight + keySpace * 2;
@@ -508,8 +513,29 @@ public class KeyBoardView extends LinearLayout {
             if (index == 0) index = 1;
             int yOffset = h - kh * index;
             if (yOffset != 0) {
-                ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), getTranslationY() + yOffset)
-                        .setDuration(300).start();
+                autoReboundAnimator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), getTranslationY() + yOffset).setDuration(300);
+                autoReboundAnimator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        autoReboundAnimator = null;
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                        autoReboundAnimator = null;
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                autoReboundAnimator.start();
             }
         }
     }
