@@ -659,7 +659,9 @@ public class KeyBoardView extends LinearLayout {
                 v.updateUpperCase(upperCase);
             }
         }
-        viewSparseArray.get(KeyUtils.KEY_AA).updateDrawable(upperCase ? R.drawable.key_icon_upper_case : R.drawable.key_icon_lower_case);
+        KeyView upperCaseView = viewSparseArray.get(KeyUtils.KEY_AA);
+        if (upperCaseView != null)
+            upperCaseView.updateDrawable(upperCase ? R.drawable.key_icon_upper_case : R.drawable.key_icon_lower_case);
     }
 
     public final void autoFocusNextEditText(KeyBean bean) {
