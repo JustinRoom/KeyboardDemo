@@ -100,7 +100,6 @@ public class KeyBoardView extends LinearLayout {
     private int keySpace;
     //存储键盘的尺寸。size[0]为键盘宽度，size[1]为键盘高度
     private int[] size = new int[2];
-    private Rect rect = new Rect();
     //数字键盘样式：水平样式、9宫格样式
     private @KeyUtils.KeyBoardType
     String numberKeyBoardType;
@@ -364,6 +363,7 @@ public class KeyBoardView extends LinearLayout {
                     viewSparseArray.put(bean.getKey(), keyView);
             }
         }
+        toggleUpperCase(upperCase);
     }
 
     private KeyView createKeyView(final SparseArray<KeyView> cache, LinearLayout layout, KeyBean bean, int keyHeight, int margin) {
@@ -445,7 +445,7 @@ public class KeyBoardView extends LinearLayout {
         KeyBean bean = keyView.getBean();
         switch (bean.getKey()) {
             case KeyUtils.KEY_AA://切换大小写
-                toggleUpperCase();
+                toggleUpperCase(!upperCase);
                 break;
             case KeyUtils.KEY_ABC://切换字母键
                 changeToLetterKeyBoard();
@@ -617,9 +617,9 @@ public class KeyBoardView extends LinearLayout {
         }
     }
 
-    public final void toggleUpperCase() {
+    public final void toggleUpperCase(boolean upperCase) {
         ensureInitialized();
-        upperCase = !upperCase;
+        this.upperCase = upperCase;
         for (int i = KeyUtils.KEY_A; i <= KeyUtils.KEY_Z; i++) {
             KeyView v = viewSparseArray.get(i);
             if (v != null) {
