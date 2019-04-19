@@ -27,13 +27,20 @@ public class KeyUtils {
 
     public static final String TYPE_HORIZONTAL_NUMBER = "horizontalNumber";
     public static final String TYPE_NINE_PALACE_NUMBER = "ninePalaceNumber";
+    public static final String TYPE_NINE_PALACE_NUMBER_WITH_ABC = "ninePalaceNumberWithABC";
     public static final String TYPE_LETTER = "letter";
     public static final String TYPE_LETTER_NUMBER = "letterNumber";
 
     public static final String KEY_LABEL_NEXT = "Next";
-    public static final String KEY_LABEL_FINISH = "Done";
+    public static final String KEY_LABEL_DONE = "Done";
+    public static final String KEY_LABEL_SHOW_NUMBER = "Show";
+    public static final String KEY_LABEL_HIDE_NUMBER = "Hide";
 
-    @StringDef({TYPE_HORIZONTAL_NUMBER, TYPE_NINE_PALACE_NUMBER, TYPE_LETTER, TYPE_LETTER, TYPE_LETTER_NUMBER})
+    @StringDef({TYPE_HORIZONTAL_NUMBER,
+            TYPE_NINE_PALACE_NUMBER,
+            TYPE_NINE_PALACE_NUMBER_WITH_ABC,
+            TYPE_LETTER, TYPE_LETTER,
+            TYPE_LETTER_NUMBER})
     @Retention(RetentionPolicy.SOURCE)
     public @interface KeyBoardType {
     }
@@ -108,6 +115,7 @@ public class KeyUtils {
     private static SparseArray<KeyBean> keys = new SparseArray<>();
     private static List<List<KeyBean>> horizontalNumberKeys = new ArrayList<>();
     private static List<List<KeyBean>> ninePalaceNumberKeys = new ArrayList<>();
+    private static List<List<KeyBean>> ninePalaceNumberKeysWithABC = new ArrayList<>();
     private static List<List<KeyBean>> letterKeys = new ArrayList<>();
     private static List<List<KeyBean>> letterNumberKeys = new ArrayList<>();
 
@@ -134,7 +142,7 @@ public class KeyUtils {
         putKey(new KeyBean(KEY_SPACE, "Space", "\u2000"));
         putKey(new KeyBean(KEY_123, "123?", ""));
         putKey(new KeyBean(KEY_AA, "Aa", "", R.drawable.key_icon_lower_case));
-        putKey(new KeyBean(KEY_NUM, "Number", ""));
+        putKey(new KeyBean(KEY_NUM, KEY_LABEL_SHOW_NUMBER, ""));
         putKey(new KeyBean(KEY_ENTER, "Enter", "\r"));
         //letter
         putKey(new KeyBean(KEY_A, "a"));
@@ -177,6 +185,9 @@ public class KeyUtils {
                 break;
             case TYPE_NINE_PALACE_NUMBER:
                 keys = getNinePalaceNumberKeys();
+                break;
+            case TYPE_NINE_PALACE_NUMBER_WITH_ABC:
+                keys = getNinePalaceNumberKeysWithABC();
                 break;
             case TYPE_LETTER:
                 keys = getLetterKeys();
@@ -248,6 +259,43 @@ public class KeyUtils {
         return ninePalaceNumberKeys;
     }
 
+    public static List<List<KeyBean>> getNinePalaceNumberKeysWithABC() {
+        if (ninePalaceNumberKeysWithABC.isEmpty()) {
+            //第一行
+            List<KeyBean> keys0 = new ArrayList<>();
+            keys0.add(keys.get(KEY_1));
+            keys0.add(keys.get(KEY_2));
+            keys0.add(keys.get(KEY_3));
+            keys0.add(keys.get(KEY_CLOSE));
+            ninePalaceNumberKeysWithABC.add(keys0);
+            //第二行
+            List<KeyBean> keys1 = new ArrayList<>();
+            keys1.add(keys.get(KEY_4));
+            keys1.add(keys.get(KEY_5));
+            keys1.add(keys.get(KEY_6));
+            keys1.add(keys.get(KEY_SIGNED));
+            ninePalaceNumberKeysWithABC.add(keys1);
+            //第三行
+            List<KeyBean> keys2 = new ArrayList<>();
+            keys2.add(keys.get(KEY_7));
+            keys2.add(keys.get(KEY_8));
+            keys2.add(keys.get(KEY_9));
+            keys2.add(keys.get(KEY_DELETE));
+            ninePalaceNumberKeysWithABC.add(keys2);
+            //第四行
+            List<KeyBean> keys3 = new ArrayList<>();
+            keys3.add(keys.get(KEY_ABC));
+            keys3.add(keys.get(KEY_0));
+            keys3.add(keys.get(KEY_DOT));
+            keys3.add(keys.get(KEY_NEXT));
+            ninePalaceNumberKeysWithABC.add(keys3);
+        }
+        updateHorizontalWeight(KEY_SIGNED, 1.0f);
+        updateHorizontalWeight(KEY_DELETE, 1.0f);
+        updateHorizontalWeight(KEY_NEXT, 1.0f);
+        return ninePalaceNumberKeysWithABC;
+    }
+
     public static List<List<KeyBean>> getLetterKeys() {
         if (letterKeys.isEmpty()) {
             //第一行
@@ -294,6 +342,7 @@ public class KeyUtils {
             //第四行
             List<KeyBean> keys3 = new ArrayList<>();
             keys3.add(keys.get(KEY_AA));
+            keys3.add(keys.get(KEY_123));
             keys3.add(keys.get(KEY_SPACE));
             keys3.add(keys.get(KEY_NEXT));
             letterKeys.add(keys3);
@@ -302,7 +351,7 @@ public class KeyUtils {
         updateHorizontalWeight(KEY_SIGNED, 1.25f);
         updateHorizontalWeight(KEY_DELETE, 1.75f);
         updateHorizontalWeight(KEY_AA, 1.75f);
-        updateHorizontalWeight(KEY_SPACE, 7.0f);
+        updateHorizontalWeight(KEY_SPACE, 6.0f);
         updateHorizontalWeight(KEY_NEXT, 2.25f);
 
 
@@ -369,6 +418,7 @@ public class KeyUtils {
             //第五行
             List<KeyBean> keys4 = new ArrayList<>();
             keys4.add(keys.get(KEY_AA));
+            keys4.add(keys.get(KEY_123));
             keys4.add(keys.get(KEY_SPACE));
             keys4.add(keys.get(KEY_NEXT));
             letterNumberKeys.add(keys4);
@@ -377,7 +427,7 @@ public class KeyUtils {
         updateHorizontalWeight(KEY_SIGNED, 1.25f);
         updateHorizontalWeight(KEY_DELETE, 1.75f);
         updateHorizontalWeight(KEY_AA, 1.75f);
-        updateHorizontalWeight(KEY_SPACE, 7.0f);
+        updateHorizontalWeight(KEY_SPACE, 6.0f);
         updateHorizontalWeight(KEY_NEXT, 2.25f);
         return letterNumberKeys;
     }

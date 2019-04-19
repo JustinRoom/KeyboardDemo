@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,10 @@ public class KeyboardFragment extends BaseFragment implements View.OnClickListen
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_keyboard, container, false);
         keyboardView = new KeyBoardView(root.getContext());
+        int keyWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics());
+        int keyHeight = keyWidth * 3 / 4;
+        int keySpace = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
+        keyboardView.initKeyBoard(keyWidth, keyHeight, keySpace);
         keyboardView.addAllInputView(root);
 //        keyboardView.setNumberKeyBoardType(KeyUtils.TYPE_HORIZONTAL_NUMBER);
 //        keyboardView.setSupportMoving(false);

@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -207,7 +208,7 @@ public class KeyBoardView extends LinearLayout {
     public boolean onTouchEvent(MotionEvent event) {
         //如果键盘是被缩小了，则不处理touch事件
         if (isScaled() || !supportMoving)
-            return true;
+            return super.onTouchEvent(event);
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 if (touchedPointerId == event.getPointerId(0)) {
@@ -302,19 +303,6 @@ public class KeyBoardView extends LinearLayout {
         return focusedEditText;
     }
 
-    public String getKeyBoardType() {
-        return keyBoardType;
-    }
-
-    private void setKeyBoardType(@KeyUtils.KeyBoardType String keyBoardType) {
-        this.keyBoardType = keyBoardType;
-        if (keyBoardType.equals(KeyUtils.TYPE_LETTER_NUMBER)) {
-            showNumberKeys = true;
-        } else if (keyBoardType.equals(KeyUtils.TYPE_LETTER)) {
-            showNumberKeys = false;
-        }
-    }
-
     public void initKeyBoard(int keyWidth) {
         int defaultKeySpace = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getContext().getResources().getDisplayMetrics());
         initKeyBoard(keyWidth, keyWidth * 3 / 5, defaultKeySpace);
@@ -360,15 +348,16 @@ public class KeyBoardView extends LinearLayout {
             addView(layout, new LayoutParams(size[0], LayoutParams.WRAP_CONTENT));
             for (int j = 0; j < tempKeys.size(); j++) {
                 KeyBean bean = tempKeys.get(j);
-                KeyView keyView = createKeyView(cache, layout, bean, keyHeight, keySpace);
+                KeyView keyView = createKey(cache, layout, bean, keyHeight, keySpace);
                 if (!KeyUtils.isNotKey(bean.getKey()))
                     viewSparseArray.put(bean.getKey(), keyView);
             }
         }
         toggleUpperCase(upperCase);
+        updateNumKey();
     }
 
-    private KeyView createKeyView(final SparseArray<KeyView> cache, LinearLayout layout, KeyBean bean, int keyHeight, int margin) {
+    private KeyView createKey(final SparseArray<KeyView> cache, LinearLayout layout, KeyBean bean, int keyHeight, int margin) {
         int key = bean.getKey();
         KeyView keyView = cache.get(key);
         if (keyView == null) {
@@ -450,10 +439,11 @@ public class KeyBoardView extends LinearLayout {
                 toggleUpperCase(!upperCase);
                 break;
             case KeyUtils.KEY_ABC://切换字母键
-                changeToLetterKeyBoard();
+                show(showNumberKeys ? KeyUtils.TYPE_LETTER_NUMBER : KeyUtils.TYPE_LETTER);
                 break;
             case KeyUtils.KEY_NUM://字母键盘上显隐数字键
                 toggleNumberKeys();
+                updateNumKey();
                 break;
             case KeyUtils.KEY_CLOSE://关闭
                 closeKeyboard(true);
@@ -464,8 +454,8 @@ public class KeyBoardView extends LinearLayout {
             case KeyUtils.KEY_NEXT://聚焦下一个输入框
                 autoFocusNextEditText(bean);
                 break;
-            case KeyUtils.KEY_123://切换为数字键
-                changeToNumberKeyBoard();
+            case KeyUtils.KEY_123://切换为带"ABC"按键的数字键盘
+                show(KeyUtils.TYPE_NINE_PALACE_NUMBER_WITH_ABC);
                 break;
             case KeyUtils.KEY_SCALE://键盘缩放
                 autoScale();
@@ -775,7 +765,7 @@ public class KeyBoardView extends LinearLayout {
         }
     }
 
-    public final void toggleUpperCase(boolean upperCase) {
+    private void toggleUpperCase(boolean upperCase) {
         ensureInitialized();
         this.upperCase = upperCase;
         for (int i = KeyUtils.KEY_A; i <= KeyUtils.KEY_Z; i++) {
@@ -789,10 +779,17 @@ public class KeyBoardView extends LinearLayout {
             upperCaseView.updateDrawable(upperCase ? R.drawable.key_icon_upper_case : R.drawable.key_icon_lower_case);
     }
 
+    private void updateNumKey() {
+        KeyView toggleNumberView = viewSparseArray.get(KeyUtils.KEY_NUM);
+        if (toggleNumberView != null)
+            toggleNumberView.updateLabel(showNumberKeys ? KeyUtils.KEY_LABEL_HIDE_NUMBER : KeyUtils.KEY_LABEL_SHOW_NUMBER);
+    }
+
+
     public final void autoFocusNextEditText(KeyBean bean) {
         EditText editText = getFocusedEditText();
         if (editText == null
-                || KeyUtils.KEY_LABEL_FINISH.equals(bean.getLabel().toString())) {
+                || KeyUtils.KEY_LABEL_DONE.equals(bean.getLabel().toString())) {
             hide();
             return;
         }
@@ -811,54 +808,15 @@ public class KeyBoardView extends LinearLayout {
         showKeyBoardByEditTextInputType(editTexts.get(index));
     }
 
-    public final void changeToLetterKeyBoard() {
-        setKeyBoardType(showNumberKeys ? KeyUtils.TYPE_LETTER_NUMBER : KeyUtils.TYPE_LETTER);
-        if (getTranslationX() == 0 && getTranslationY() == 0) {
-            createKeys();
-            return;
-        }
-        executeKeyBoardReLocation(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                createKeys();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-    }
-
     public final void toggleNumberKeys() {
         if (KeyUtils.TYPE_LETTER_NUMBER.equals(getKeyBoardType())) {
-            setKeyBoardType(KeyUtils.TYPE_LETTER);
-            createKeys();
             showNumberKeys = false;
+            show(KeyUtils.TYPE_LETTER);
             return;
         }
         if (KeyUtils.TYPE_LETTER.equals(getKeyBoardType())) {
-            setKeyBoardType(KeyUtils.TYPE_LETTER_NUMBER);
-            createKeys();
             showNumberKeys = true;
-        }
-    }
-
-    public final void changeToNumberKeyBoard() {
-        setKeyBoardType(getNumberKeyBoardType());
-        createKeys();
-        if (getTranslationY() > 0) {
-            ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), 0).setDuration(300).start();
+            show(KeyUtils.TYPE_LETTER_NUMBER);
         }
     }
 
@@ -939,7 +897,12 @@ public class KeyBoardView extends LinearLayout {
                 show(getNumberKeyBoardType());
                 break;
             default:
-                show(showNumberKeys ? KeyUtils.TYPE_LETTER_NUMBER : KeyUtils.TYPE_LETTER);
+                String keyboardType = getKeyBoardType();
+                if (TextUtils.isEmpty(keyboardType)
+                        || KeyUtils.TYPE_HORIZONTAL_NUMBER.equals(keyboardType)
+                        || KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(keyboardType))
+                    keyboardType = showNumberKeys ? KeyUtils.TYPE_LETTER_NUMBER : KeyUtils.TYPE_LETTER;
+                show(keyboardType);
                 break;
         }
         if (editTexts.isEmpty()) {
@@ -947,7 +910,7 @@ public class KeyBoardView extends LinearLayout {
         }
         if (isLastEditText(editText)
                 || (imeOptions & EditorInfo.IME_MASK_ACTION) == EditorInfo.IME_ACTION_DONE) {
-            viewSparseArray.get(KeyUtils.KEY_NEXT).updateLabel(KeyUtils.KEY_LABEL_FINISH);
+            viewSparseArray.get(KeyUtils.KEY_NEXT).updateLabel(KeyUtils.KEY_LABEL_DONE);
         } else {
             viewSparseArray.get(KeyUtils.KEY_NEXT).updateLabel(KeyUtils.KEY_LABEL_NEXT);
         }
@@ -963,18 +926,74 @@ public class KeyBoardView extends LinearLayout {
 
     private void show(@KeyUtils.KeyBoardType String keyBoardType) {
         if (!keyBoardType.equals(getKeyBoardType())) {
+            setKeyBoardType(keyBoardType);
             switch (keyBoardType) {
                 case KeyUtils.TYPE_HORIZONTAL_NUMBER:
                 case KeyUtils.TYPE_NINE_PALACE_NUMBER:
-                    changeToNumberKeyBoard();
+                    showNumberKeyboard();
+                    break;
+                case KeyUtils.TYPE_NINE_PALACE_NUMBER_WITH_ABC:
+                    showNumberWithABCKeyboard();
                     break;
                 case KeyUtils.TYPE_LETTER:
                 case KeyUtils.TYPE_LETTER_NUMBER:
-                    changeToLetterKeyBoard();
+                    showLetterKeyBoard();
                     break;
             }
         }
         showKeyboard(true);
+    }
+
+    private void showNumberKeyboard() {
+        createKeys();
+        if (getTranslationY() > 0) {
+            ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), 0).setDuration(300).start();
+        }
+    }
+
+    private void showNumberWithABCKeyboard() {
+        createKeys();
+    }
+
+    private void showLetterKeyBoard() {
+        if (getTranslationX() == 0 && getTranslationY() == 0) {
+            createKeys();
+            return;
+        }
+        executeKeyBoardReLocation(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                createKeys();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+    }
+
+    private void setKeyBoardType(@KeyUtils.KeyBoardType String keyBoardType) {
+        this.keyBoardType = keyBoardType;
+        if (keyBoardType.equals(KeyUtils.TYPE_LETTER_NUMBER)) {
+            showNumberKeys = true;
+        } else if (keyBoardType.equals(KeyUtils.TYPE_LETTER)) {
+            showNumberKeys = false;
+        }
+    }
+
+    public String getKeyBoardType() {
+        return keyBoardType;
     }
 
     public String getNumberKeyBoardType() {
