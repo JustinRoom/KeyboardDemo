@@ -7,7 +7,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
@@ -457,7 +456,7 @@ public class KeyBoardView extends LinearLayout {
                 toggleNumberKeys();
                 break;
             case KeyUtils.KEY_CLOSE://关闭
-                hide();
+                closeKeyboard(true);
                 break;
             case KeyUtils.KEY_DELETE://删除键
                 deleteInput();
@@ -517,7 +516,7 @@ public class KeyBoardView extends LinearLayout {
                 int count = (int) fromY / kh;
                 float rest = fromY - kh * count;
                 if (rest >= kh / 2)
-                    count ++;
+                    count++;
                 toY = kh * count;
             }
             if (fromY != toY) {
@@ -611,6 +610,132 @@ public class KeyBoardView extends LinearLayout {
     private boolean isScaled() {
         return getScaleX() < 1.0f;
     }
+
+
+    //******************************** 键盘显示(或隐藏) start **************************************************//
+
+    public void toggleVisibility() {
+        if (getVisibility() == VISIBLE)
+            closeKeyboard(true);
+        else
+            showKeyboard(true);
+    }
+
+    public void showKeyboard(boolean withAnimation) {
+        if (getVisibility() == VISIBLE)
+            return;
+        if (supportMoving || !withAnimation || getTranslationY() == 0) {
+            show();
+            return;
+        }
+        int duration = (int) getTranslationX();
+        Animator animator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), 0).setDuration(Math.abs(duration));
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                setVisibility(VISIBLE);
+                enableAllKeys(false);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                show();
+                enableAllKeys(true);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                show();
+                enableAllKeys(true);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        animator.start();
+    }
+
+    public void closeKeyboard(boolean withAnimation) {
+        if (getVisibility() != VISIBLE)
+            return;
+        if (supportMoving || !withAnimation) {
+            hide();
+            return;
+        }
+        int offsetY = 0;
+        if (getParent() != null) {
+            offsetY = ((ViewGroup) getParent()).getHeight() - getTop() + size[1];
+        }
+        if (offsetY == 0) {
+            hide();
+            return;
+        }
+        Animator animator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), getTranslationY() + offsetY).setDuration(Math.abs(offsetY));
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                enableAllKeys(false);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                hide();
+                enableAllKeys(true);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                hide();
+                enableAllKeys(true);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        animator.start();
+    }
+
+    private void show() {
+        setVisibility(VISIBLE);
+        if (keyBoardListener != null)
+            keyBoardListener.onShow(this);
+    }
+
+    private void hide() {
+        setVisibility(GONE);
+        if (keyBoardListener != null)
+            keyBoardListener.onHide(this);
+    }
+
+    public void hideIfNecessary() {
+        if (getFocusedEditText() == null)
+            closeKeyboard(true);
+    }
+
+    public void onResume() {
+        final EditText focusedView = getFocusedEditText();
+        if (focusedView != null) {
+            showKeyBoardByEditTextInputType(focusedView);
+        }
+    }
+
+    public void onPause() {
+        closeKeyboard(false);
+    }
+
+    public void onDestroy() {
+        removeAllEditText();
+        if (getParent() != null) {
+            ((ViewGroup) getParent()).removeView(this);
+        }
+    }
+
+    //******************************** 键盘显示(或隐藏) end **************************************************//
+
 
     private int getStatusBarHeight() {
         int statusBarHeight = 0;
@@ -849,35 +974,7 @@ public class KeyBoardView extends LinearLayout {
                     break;
             }
         }
-        show();
-    }
-
-    public void show() {
-        if (getVisibility() != VISIBLE) {
-            setVisibility(VISIBLE);
-            if (keyBoardListener != null)
-                keyBoardListener.onShow(this);
-        }
-    }
-
-    public void hide() {
-        if (getVisibility() == VISIBLE) {
-            setVisibility(GONE);
-            if (keyBoardListener != null)
-                keyBoardListener.onHide(this);
-        }
-    }
-
-    public void toggleVisibility() {
-        if (getVisibility() == VISIBLE)
-            hide();
-        else
-            show();
-    }
-
-    public void hideIfNecessary() {
-        if (getFocusedEditText() == null)
-            hide();
+        showKeyboard(true);
     }
 
     public String getNumberKeyBoardType() {
@@ -924,24 +1021,6 @@ public class KeyBoardView extends LinearLayout {
 
     public boolean isShowing() {
         return viewSparseArray.size() > 0 && getVisibility() == VISIBLE;
-    }
-
-    public void onResume() {
-        final EditText focusedView = getFocusedEditText();
-        if (focusedView != null) {
-            showKeyBoardByEditTextInputType(focusedView);
-        }
-    }
-
-    public void onPause() {
-        hide();
-    }
-
-    public void onDestroy() {
-        removeAllEditText();
-        if (getParent() != null) {
-            ((ViewGroup) getParent()).removeView(this);
-        }
     }
 
     private void ensureInitialized() {
