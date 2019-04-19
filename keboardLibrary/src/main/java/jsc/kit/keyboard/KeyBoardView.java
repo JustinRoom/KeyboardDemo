@@ -22,6 +22,8 @@ import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -163,13 +165,10 @@ public class KeyBoardView extends LinearLayout {
         if (autoReboundAnimator != null) {
             autoReboundAnimator.cancel();
         }
-        //如果键盘是被缩小了，则不拦截touch事件
-        if (isScaled() || !supportMoving)
-            return super.onInterceptTouchEvent(ev);
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 //当没有进入键盘拖动模式
-                if (!intoMoveModel) {
+                if (supportMoving && !intoMoveModel) {
                     //这里使用PointerId防止多手指touch混乱问题
                     touchedPointerId = ev.getPointerId(0);
                     touchX = ev.getX();
@@ -177,16 +176,18 @@ public class KeyBoardView extends LinearLayout {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (!intoMoveModel && touchedPointerId == ev.getPointerId(0)) {
+                if (supportMoving && !intoMoveModel && touchedPointerId == ev.getPointerId(0)) {
                     float tempX = ev.getX();
                     float tempY = ev.getY();
                     float dx = touchX - tempX;
                     float dy = touchY - tempY;
                     //当在任意方向上滑动大于等于8pixels时进入键盘拖动模式
                     if (Math.abs(dx) >= 8 || Math.abs(dy) >= 8) {
-                        intoMoveModel = true;
-                        //进入拖动模式后，所有按键不可用
-                        enableAllKeys(false);
+                        if (!isScaled()) {
+                            intoMoveModel = true;
+                            //进入拖动模式后，所有按键不可用
+                            enableAllKeys(false);
+                        }
                     } else {
                         touchX = tempX;
                         touchY = tempY;
@@ -195,6 +196,9 @@ public class KeyBoardView extends LinearLayout {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                if (supportMoving && !intoMoveModel) {
+                    autoRebound();
+                }
                 break;
         }
         return intoMoveModel;
@@ -358,8 +362,7 @@ public class KeyBoardView extends LinearLayout {
             for (int j = 0; j < tempKeys.size(); j++) {
                 KeyBean bean = tempKeys.get(j);
                 KeyView keyView = createKeyView(cache, layout, bean, keyHeight, keySpace);
-                if (!KeyUtils.isNotKey(bean.getKey())
-                        && bean.getKey() != KeyUtils.KEY_SCALE)
+                if (!KeyUtils.isNotKey(bean.getKey()))
                     viewSparseArray.put(bean.getKey(), keyView);
             }
         }
@@ -507,7 +510,7 @@ public class KeyBoardView extends LinearLayout {
         float toY;
         float fromY = getTranslationY();
         int kh = keyHeight + keySpace * 2;
-        if (fromY > -kh * 3) {
+        if (fromY > -kh * 2) {
             if (fromY < 0) {
                 toY = 0;
             } else {
@@ -546,32 +549,62 @@ public class KeyBoardView extends LinearLayout {
     }
 
     private void autoScale() {
-        float scaleValue = 0.8f;
+        final float scaleValue = 0.8f;
         if (isScaled()) {
-            if (getTranslationX() == 0 && getTranslationY() == 0) {
-                ObjectAnimator.ofPropertyValuesHolder(this,
-                        PropertyValuesHolder.ofFloat(View.SCALE_X, getScaleX(), 1.0f),
-                        PropertyValuesHolder.ofFloat(View.SCALE_Y, getScaleY(), 1.0f)
-                ).setDuration(300).start();
-                return;
-            }
-            float transX = size[0] * scaleValue / 2.0f - size[0] / 2.0f;
-            float transY = size[1] * scaleValue / 2.0f - size[1] / 2.0f;
-            ObjectAnimator.ofPropertyValuesHolder(this,
+            Animator animator = ObjectAnimator.ofPropertyValuesHolder(this,
                     PropertyValuesHolder.ofFloat(View.SCALE_X, getScaleX(), 1.0f),
                     PropertyValuesHolder.ofFloat(View.SCALE_Y, getScaleY(), 1.0f),
-                    PropertyValuesHolder.ofFloat(View.TRANSLATION_X, getTranslationX(), getTranslationX() + transX),
-                    PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, getTranslationY(), getTranslationY() + transY)
-            ).setDuration(300).start();
+                    PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, getTranslationY(), 0)
+            ).setDuration(300);
+            animator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    viewSparseArray.get(KeyUtils.KEY_SCALE).setEnabled(false);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    viewSparseArray.get(KeyUtils.KEY_SCALE).setEnabled(true);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    viewSparseArray.get(KeyUtils.KEY_SCALE).setEnabled(true);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            animator.start();
         } else {
-            float transX = size[0] / 2.0f - size[0] * scaleValue / 2;
-            float transY = size[1] / 2.0f - size[1] * scaleValue / 2;
-            ObjectAnimator.ofPropertyValuesHolder(this,
-                    PropertyValuesHolder.ofFloat(View.SCALE_X, getScaleX(), scaleValue),
-                    PropertyValuesHolder.ofFloat(View.SCALE_Y, getScaleY(), scaleValue),
-                    PropertyValuesHolder.ofFloat(View.TRANSLATION_X, getTranslationX(), getTranslationX() + transX),
-                    PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, getTranslationY(), getTranslationY() + transY)
-            ).setDuration(300).start();
+            ScaleAnimation animation = new ScaleAnimation(
+                    1.0f, scaleValue,
+                    1.0f, scaleValue,
+                    ScaleAnimation.RELATIVE_TO_SELF, .5f,
+                    ScaleAnimation.RELATIVE_TO_SELF, 1.0f
+            );
+            animation.setDuration(300);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    viewSparseArray.get(KeyUtils.KEY_SCALE).setEnabled(false);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    setScaleX(scaleValue);
+                    setScaleY(scaleValue);
+                    viewSparseArray.get(KeyUtils.KEY_SCALE).setEnabled(true);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            startAnimation(animation);
         }
     }
 
@@ -866,6 +899,10 @@ public class KeyBoardView extends LinearLayout {
 
     public void setSupportMoving(boolean supportMoving) {
         this.supportMoving = supportMoving;
+    }
+
+    public void setDefaultUpperCase(boolean upperCase) {
+        this.upperCase = upperCase;
     }
 
     public SparseArray<KeyView> resetKeys() {
