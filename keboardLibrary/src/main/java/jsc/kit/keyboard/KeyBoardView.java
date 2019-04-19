@@ -504,16 +504,21 @@ public class KeyBoardView extends LinearLayout {
     }
 
     private void autoRebound() {
-        getLocalVisibleRect(rect);
-        int h = rect.height() - getPaddingTop();
+        float toY;
+        float fromY = getTranslationY();
         int kh = keyHeight + keySpace * 2;
-        if (h < size[1] && getTranslationY() > 0) {
-            int index = h / kh;
-            if (h >= index * kh + kh / 2) index++;
-            if (index == 0) index = 1;
-            int yOffset = h - kh * index;
-            if (yOffset != 0) {
-                autoReboundAnimator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), getTranslationY() + yOffset).setDuration(300);
+        if (fromY > -kh * 3) {
+            if (fromY < 0) {
+                toY = 0;
+            } else {
+                int count = (int) fromY / kh;
+                float rest = fromY - kh * count;
+                if (rest >= kh / 2)
+                    count ++;
+                toY = kh * count;
+            }
+            if (fromY != toY) {
+                autoReboundAnimator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, fromY, toY).setDuration(200);
                 autoReboundAnimator.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
