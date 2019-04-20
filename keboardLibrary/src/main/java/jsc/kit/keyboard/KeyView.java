@@ -84,8 +84,7 @@ public class KeyView extends FrameLayout {
     }
 
     public void setTypeface(Typeface typeface) {
-        if (typeface != null)
-            tvKey.setTypeface(typeface);
+        tvKey.setTypeface(typeface == null ? Typeface.DEFAULT : typeface);
     }
 
     public ImageView getImageKeyView() {

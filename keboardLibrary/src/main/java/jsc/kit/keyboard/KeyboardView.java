@@ -346,9 +346,13 @@ public class KeyboardView extends LinearLayout {
     /**
      * 初始化按键的水平和垂直间距
      */
-    public void initKeySpace(int horizontalSpace, int verticalSpace){
+    public void initKeySpace(int horizontalSpace, int verticalSpace) {
         this.keyHorizontalSpace = horizontalSpace;
         this.keyVerticalSpace = verticalSpace;
+    }
+
+    public void initCustomTypeface(Typeface typeface) {
+        this.typeface = typeface;
     }
 
     /**
@@ -400,7 +404,9 @@ public class KeyboardView extends LinearLayout {
     private void createKey(LinearLayout layout, KeyBean bean, int keyHeight) {
         int key = bean.getKey();
         KeyView keyView = viewSparseArray.get(key);
+        boolean isCachedView = false;
         if (keyView == null) {
+            isCachedView = true;
             keyView = new KeyView(getContext());
             keyView.setTypeface(typeface);
             keyView.getTextKeyView().setTextColor(getKeyTextColor(key));
@@ -426,6 +432,8 @@ public class KeyboardView extends LinearLayout {
         params.topMargin = keyVerticalSpace;
         params.bottomMargin = keyVerticalSpace;
         layout.addView(keyView, params);
+        if (createKeyListener != null)
+            createKeyListener.onKeyCreated(isCachedView, keyView, bean);
     }
 
     private float getLayoutWeight(List<List<KeyBean>> keys) {
@@ -823,7 +831,7 @@ public class KeyboardView extends LinearLayout {
                     PropertyValuesHolder.ofFloat(View.SCALE_X, scaleX, scaleX * 1.2f, scaleX),
                     PropertyValuesHolder.ofFloat(View.SCALE_Y, scaleY, scaleY * 1.2f, scaleY)
             ).setDuration(200);
-            animator.addListener(new CusAnimatorListener(key, scaleX, scaleY));
+            animator.addListener(new KeyScaleAnimatorListener(key, scaleX, scaleY));
             animatorSparseArray.put(key, animator);
             animator.start();
         }
@@ -1126,14 +1134,16 @@ public class KeyboardView extends LinearLayout {
          * @return label text sie. It's unit is dp.
          */
         float getKeyTextSize(@KeyUtils.KeyboardType String keyboardType, @KeyUtils.KeyCode int key);
+
+        void onKeyCreated(boolean isCachedView, KeyView keyView, KeyBean bean);
     }
 
-    private class CusAnimatorListener implements Animator.AnimatorListener {
+    private class KeyScaleAnimatorListener implements Animator.AnimatorListener {
         private int key;
         private float scaleX;
         private float scaleY;
 
-        public CusAnimatorListener(int key, float scaleX, float scaleY) {
+        public KeyScaleAnimatorListener(int key, float scaleX, float scaleY) {
             this.key = key;
             this.scaleX = scaleX;
             this.scaleY = scaleY;
