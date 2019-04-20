@@ -9,7 +9,8 @@
         </attr>
         <attr name="keyWidth" format="dimension"/>
         <attr name="keyHeight" format="dimension"/>
-        <attr name="keySpace" format="dimension"/>
+        <attr name="keyHorizontalSpace" format="dimension"/>
+        <attr name="keyVerticalSpace" format="dimension"/>
 
     </declare-styleable>
 

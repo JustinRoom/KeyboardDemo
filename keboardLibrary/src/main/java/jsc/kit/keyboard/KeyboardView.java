@@ -127,8 +127,10 @@ public class KeyboardView extends LinearLayout {
     private int keyWidth;
     //按键的基本高度
     private int keyHeight;
-    //按键的间隙
-    private int keySpace;
+    //按键的水平间隙
+    private int keyHorizontalSpace;
+    //按键的垂直间隙
+    private int keyVerticalSpace;
     //存储键盘的尺寸。size[0]为键盘宽度，size[1]为键盘高度
     private int[] size = new int[2];
     //数字键盘样式：水平样式、9宫格样式
@@ -165,12 +167,14 @@ public class KeyboardView extends LinearLayout {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.KeyboardView, defStyleAttr, 0);
         int keyWidth = a.getDimensionPixelSize(R.styleable.KeyboardView_keyWidth, defaultKeyWidth);
         int keyHeight = a.getDimensionPixelSize(R.styleable.KeyboardView_keyHeight, 0);
-        int keySpace = a.getDimensionPixelSize(R.styleable.KeyboardView_keySpace, defaultKeySpace);
-        int boardType = a.getInt(R.styleable.KeyboardView_keyBoardType, 0);
+        int horizontalSpace = a.getDimensionPixelSize(R.styleable.KeyboardView_keyHorizontalSpace, defaultKeySpace);
+        int verticalSpace = a.getDimensionPixelSize(R.styleable.KeyboardView_keyVerticalSpace, defaultKeySpace);
+        int boardType = a.getInt(R.styleable.KeyboardView_keyboardType, 0);
         a.recycle();
         if (keyHeight <= 0)
             keyHeight = keyWidth * 3 / 5;
-        initKeyboard(keyWidth, keyHeight, keySpace);
+        initKeySize(keyWidth, keyHeight);
+        initKeySpace(horizontalSpace, verticalSpace);
         setNumberKeyboardType(KeyUtils.TYPE_NINE_PALACE_NUMBER);
         if (isInEditMode())
             switch (boardType) {
@@ -331,16 +335,20 @@ public class KeyboardView extends LinearLayout {
         return focusedEditText;
     }
 
-    public void initKeyboard(int keyWidth) {
-        int defaultKeySpace = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getContext().getResources().getDisplayMetrics());
-        initKeyboard(keyWidth, keyWidth * 3 / 5, defaultKeySpace);
-    }
-
-    public void initKeyboard(int keyWidth, int keyHeight, int space) {
+    /**
+     * 初始化按键的宽高
+     */
+    public void initKeySize(int keyWidth, int keyHeight) {
         this.keyWidth = keyWidth;
         this.keyHeight = keyHeight;
-        this.keySpace = space;
-//        typeface = Typeface.createFromAsset(getContext().getAssets(), "arial_old.ttf");
+    }
+
+    /**
+     * 初始化按键的水平和垂直间距
+     */
+    public void initKeySpace(int horizontalSpace, int verticalSpace){
+        this.keyHorizontalSpace = horizontalSpace;
+        this.keyVerticalSpace = verticalSpace;
     }
 
     /**
@@ -365,16 +373,16 @@ public class KeyboardView extends LinearLayout {
             column++;
             maxWeight = column;
         }
-        size[0] = getPaddingLeft() + (keyWidth + 2 * keySpace) * column + getPaddingRight();
+        size[0] = getPaddingLeft() + (keyWidth + 2 * keyHorizontalSpace) * column + getPaddingRight();
         //宽度大于屏幕宽度，重新计算按键的宽度
         if (size[0] > getResources().getDisplayMetrics().widthPixels) {
             final int tempKeyWidth = keyWidth;
-            int availableWidth = getResources().getDisplayMetrics().widthPixels - getPaddingLeft() - getPaddingRight() - keySpace * 2 * column;
+            int availableWidth = getResources().getDisplayMetrics().widthPixels - getPaddingLeft() - getPaddingRight() - keyHorizontalSpace * 2 * column;
             keyWidth = availableWidth / column;
-            size[0] = getPaddingLeft() + (keyWidth + 2 * keySpace) * column + getPaddingRight();
+            size[0] = getPaddingLeft() + (keyWidth + 2 * keyHorizontalSpace) * column + getPaddingRight();
             keyHeight = keyWidth * keyHeight / tempKeyWidth;
         }
-        size[1] = getPaddingTop() + (keyHeight + 2 * keySpace) * row + getPaddingBottom();
+        size[1] = getPaddingTop() + (keyHeight + 2 * keyVerticalSpace) * row + getPaddingBottom();
         for (int i = 0; i < row; i++) {
             List<KeyBean> tempKeys = keys.get(i);
             LinearLayout layout = new LinearLayout(getContext());
@@ -382,14 +390,14 @@ public class KeyboardView extends LinearLayout {
             layout.setWeightSum(maxWeight);
             addView(layout, new LayoutParams(size[0], LayoutParams.WRAP_CONTENT));
             for (int j = 0; j < tempKeys.size(); j++) {
-                createKey(layout, tempKeys.get(j), keyHeight, keySpace);
+                createKey(layout, tempKeys.get(j), keyHeight);
             }
         }
         toggleUpperCase(upperCase);
         updateNumKey();
     }
 
-    private void createKey(LinearLayout layout, KeyBean bean, int keyHeight, int margin) {
+    private void createKey(LinearLayout layout, KeyBean bean, int keyHeight) {
         int key = bean.getKey();
         KeyView keyView = viewSparseArray.get(key);
         if (keyView == null) {
@@ -413,10 +421,10 @@ public class KeyboardView extends LinearLayout {
                 viewSparseArray.put(key, keyView);
         }
         LayoutParams params = new LayoutParams(0, keyHeight, bean.getHorizontalWeight());
-        params.leftMargin = margin;
-        params.rightMargin = margin;
-        params.topMargin = margin;
-        params.bottomMargin = margin;
+        params.leftMargin = keyHorizontalSpace;
+        params.rightMargin = keyHorizontalSpace;
+        params.topMargin = keyVerticalSpace;
+        params.bottomMargin = keyVerticalSpace;
         layout.addView(keyView, params);
     }
 
@@ -511,7 +519,7 @@ public class KeyboardView extends LinearLayout {
         int pRight = parent.getWidth() - parent.getPaddingRight();
         int pTop = parent.getPaddingTop();
         int pBottom = parent.getHeight() - parent.getPaddingBottom();
-        int keyHeightWithSpace = keyHeight + keySpace * 2;
+        int keyHeightWithSpace = keyHeight + keyVerticalSpace * 2;
         getHitRect(rect);
         if (dx + rect.left < pLeft) {
             dx = pLeft - rect.left;
@@ -545,12 +553,12 @@ public class KeyboardView extends LinearLayout {
         int pRight = parent.getWidth() - parent.getPaddingRight();
         int pTop = parent.getPaddingTop();
         int pBottom = parent.getHeight() - parent.getPaddingBottom();
-        int keyHeightWithSpace = keyHeight + keySpace * 2;
+        int keyHeightWithSpace = keyHeight + keyVerticalSpace * 2;
         getHitRect(rect);
         int offset = pBottom - rect.top;
         if (offset > size[1] + keyHeightWithSpace * 2 + getPaddingBottom()) {
             return;
-        } else if (offset >= size[1] - getPaddingBottom()) {
+        } else if (offset >= size[1] - keyHeightWithSpace / 2 - getPaddingBottom()) {
             offset = size[1];
         } else if (offset >= keyHeightWithSpace + getPaddingTop()) {
             offset = offset - getPaddingTop();

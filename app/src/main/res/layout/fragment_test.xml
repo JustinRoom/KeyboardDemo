@@ -16,9 +16,11 @@
         android:layout_gravity="bottom|center_horizontal"
         android:paddingLeft="@dimen/space_16"
         android:paddingTop="@dimen/space_8"
+        android:background="@drawable/key_keyboard_background_shape"
         android:paddingRight="@dimen/space_16"
         android:paddingBottom="@dimen/space_8"
-        app:keyboardType="letterNumber"
-        app:keyWidth="@dimen/space_48" />
+        app:keyVerticalSpace="@dimen/space_4"
+        app:keyWidth="@dimen/space_48"
+        app:keyboardType="letterNumber" />
 
 </FrameLayout>
