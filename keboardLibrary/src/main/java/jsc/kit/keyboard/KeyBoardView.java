@@ -162,7 +162,6 @@ public class KeyBoardView extends LinearLayout {
     public KeyBoardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setOrientation(VERTICAL);
-        setBackgroundResource(R.drawable.key_keyboard_background_shape);
         int defaultKeyWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, context.getResources().getDisplayMetrics());
         int defaultKeySpace = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, context.getResources().getDisplayMetrics());
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.KeyBoardView, defStyleAttr, 0);
@@ -562,7 +561,7 @@ public class KeyBoardView extends LinearLayout {
             int rowCount = offset / keyHeightWithSpace;
             int rest = offset % keyHeightWithSpace;
             if (rest >= keyHeightWithSpace / 2)
-                rowCount ++;
+                rowCount++;
             offset = rowCount * keyHeightWithSpace + getPaddingTop();
         } else {
             offset = keyHeightWithSpace + getPaddingTop();
@@ -1104,6 +1103,8 @@ public class KeyBoardView extends LinearLayout {
     }
 
     private void ensureInitialized() {
+        if (isInEditMode())
+            return;
         if (getParent() == null)
             throw new IllegalStateException("Initialize first.");
     }

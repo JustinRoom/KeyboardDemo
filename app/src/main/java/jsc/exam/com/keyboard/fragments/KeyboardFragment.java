@@ -31,6 +31,7 @@ public class KeyboardFragment extends BaseFragment implements View.OnClickListen
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_keyboard, container, false);
         keyboardView = new KeyBoardView(root.getContext());
+        keyboardView.setBackgroundResource(R.drawable.key_keyboard_background_shape);
         keyboardView.setPadding(16, 24, 16, 24);
         keyboardView.addAllInputView(root);
 //        keyboardView.setNumberKeyBoardType(KeyUtils.TYPE_HORIZONTAL_NUMBER);
