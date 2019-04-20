@@ -584,6 +584,16 @@ public class KeyUtils {
         return key >= KeyUtils.KEY_BLANK && key <= KeyUtils.KEY_BLACK;
     }
 
+    public static boolean isLinkedInputSymbolKey(@KeyCode int key){
+        return key == KEY_SYMBOL_048
+                || key == KEY_SYMBOL_049
+                || key == KEY_SYMBOL_050
+                || key == KEY_SYMBOL_051
+                || key == KEY_SYMBOL_052
+                || key == KEY_SYMBOL_053
+                || key == KEY_SYMBOL_063;
+    }
+
 
     public static void init(Activity activity, @NonNull KeyboardView keyboardView) {
         init(activity == null ? null : activity.getWindow(), keyboardView, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);

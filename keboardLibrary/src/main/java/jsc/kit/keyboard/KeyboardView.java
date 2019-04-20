@@ -317,6 +317,11 @@ public class KeyboardView extends LinearLayout {
         } else {
             editable.insert(selectionStart, value);
         }
+        if (KeyUtils.isLinkedInputSymbolKey(bean.getKey())) {
+            int newSelectionStart = focusedView.getSelectionStart();
+            if (newSelectionStart - selectionStart == 2)
+                focusedView.setSelection(newSelectionStart - 1);
+        }
     }
 
     @Nullable
