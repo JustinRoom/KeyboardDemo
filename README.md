@@ -1,6 +1,10 @@
 # Keyboard
 自定义支持拖动、支持缩放的软键盘。适用于Activity、Fragment、DialogFragment。当手指在键盘上滑动超过8pixels时就进入了拖动模式。
 
+[ ![Download](https://api.bintray.com/packages/justinquote/maven/keyboard-component/images/download.svg) ](https://bintray.com/justinquote/maven/keyboard-component/_latestVersion)
+
+<a href='https://bintray.com/justinquote/maven/keyboard-component?source=watch' alt='Get automatic notifications about new "keyboard-component" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a>
+
 ### 一、扫描下载体验
 ![](app/src/main/res/drawable/keboard_qr_code.png)
 
@@ -19,7 +23,7 @@
  
 ### 三、Usage
  使用要点：
- + a、创建[KeyBoardView](keboardLibrary/src/main/java/jsc/kit/keyboard/KeyBoardView.java)实例（支持xml布局文件）：
+ + a、创建[KeyboardView](keboardLibrary/src/main/java/jsc/kit/keyboard/KeyboardView.java)实例（支持xml布局文件）：
 ```
 KeyBoardView keyboardView = new KeyBoardView(context);
 ```
@@ -35,7 +39,7 @@ KeyBoardView keyboardView = new KeyBoardView(context);
 
     public void removeInputView(@NonNull EditText editText)
 ```
-+ c、把[KeyBoardView](keboardLibrary/src/main/java/jsc/kit/keyboard/KeyBoardView.java)添加到`Activity`、`Fragment`、`DialogFragment`所在的`Window`中：
++ c、把[KeyboardView](keboardLibrary/src/main/java/jsc/kit/keyboard/KeyboardView.java)添加到`Activity`、`Fragment`、`DialogFragment`所在的`Window`中：
 [KeyUtils](keboardLibrary/src/main/java/jsc/kit/keyboard/KeyUtils.java)工具已提供了一个快速添加的方法。
 ```
 KeyUtils.init(getActivity().getWindow(), keyboardView);
