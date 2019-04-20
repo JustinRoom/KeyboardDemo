@@ -227,7 +227,7 @@ public class KeyBoardView extends LinearLayout {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (isCanDrag() && !intoDragModel) {
+                if (isCanDrag()) {
                     autoRebound();
                 }
                 break;
@@ -505,22 +505,23 @@ public class KeyBoardView extends LinearLayout {
 
     private void executeDrag(float dx, float dy) {
         ViewGroup parent = (ViewGroup) getParent();
-        int width = parent.getWidth();
-        int height = parent.getHeight();
+        int pLeft = parent.getPaddingLeft();
+        int pRight = parent.getWidth() - parent.getPaddingRight();
+        int pTop = parent.getPaddingTop();
+        int pBottom = parent.getHeight() - parent.getPaddingBottom();
         int keyHeightWithSpace = keyHeight + keySpace * 2;
         getHitRect(rect);
-        Log.i(TAG, "executeDrag: " + rect.toString());
-        if (dx + rect.left < 0) {
-            dx = 0 - rect.left;
+        if (dx + rect.left < pLeft) {
+            dx = pLeft - rect.left;
         }
-        if (dx + rect.right > width) {
-            dx = width - rect.right;
+        if (dx + rect.right > pRight) {
+            dx = pRight - rect.right;
         }
-        if (dy + rect.top < getStatusBarHeight() + keyHeightWithSpace + getPaddingBottom() - size[1]) {
-            dy = getStatusBarHeight() + keyHeightWithSpace + getPaddingBottom() - size[1] - rect.top;
+        if (dy + rect.top < pTop - (size[1] - keyHeightWithSpace - getPaddingBottom())) {
+            dy = pTop - (size[1] - keyHeightWithSpace - getPaddingBottom()) - rect.top;
         }
-        if (dy + rect.bottom > height + size[1] - keyHeightWithSpace - getPaddingTop()) {
-            dy = height + size[1] - keyHeightWithSpace - getPaddingTop() - rect.bottom;
+        if (dy + rect.bottom > pBottom + size[1] - keyHeightWithSpace - getPaddingTop()) {
+            dy = pBottom + size[1] - keyHeightWithSpace - getPaddingTop() - rect.bottom;
         }
         switch (curDragSupportModel) {
             case ONLY_HORIZONTAL:
@@ -537,44 +538,56 @@ public class KeyBoardView extends LinearLayout {
     }
 
     private void autoRebound() {
-        float toY;
-        float fromY = getTranslationY();
-        int kh = keyHeight + keySpace * 2;
-        if (fromY > -kh * 2) {
-            if (fromY < 0) {
-                toY = 0;
-            } else {
-                int count = (int) fromY / kh;
-                float rest = fromY - kh * count;
-                if (rest >= kh / 2)
-                    count++;
-                toY = kh * count;
-            }
-            if (fromY != toY) {
-                autoReboundAnimator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, fromY, toY).setDuration(200);
-                autoReboundAnimator.addListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
+        ViewGroup parent = (ViewGroup) getParent();
+        int pLeft = parent.getPaddingLeft();
+        int pRight = parent.getWidth() - parent.getPaddingRight();
+        int pTop = parent.getPaddingTop();
+        int pBottom = parent.getHeight() - parent.getPaddingBottom();
+        int keyHeightWithSpace = keyHeight + keySpace * 2;
+        getHitRect(rect);
+        int offset = pBottom - rect.top;
+        if (offset > size[1] + keyHeightWithSpace * 2 + getPaddingBottom()) {
+            return;
+        } else if (offset >= size[1] - getPaddingBottom()) {
+            offset = size[1];
+        } else if (offset >= keyHeightWithSpace + getPaddingTop()) {
+            offset = offset - getPaddingTop();
+            int rowCount = offset / keyHeightWithSpace;
+            int rest = offset % keyHeightWithSpace;
+            if (rest >= keyHeightWithSpace / 2)
+                rowCount ++;
+            offset = rowCount * keyHeightWithSpace + getPaddingTop();
+        } else {
+            offset = keyHeightWithSpace + getPaddingTop();
+        }
+        int dy = pBottom - offset - rect.top;
+        if (Math.abs(dy) <= keyHeightWithSpace * 2 + getPaddingTop()) {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), getTranslationY() + dy).setDuration(Math.abs(dy));
+            animator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    autoReboundAnimator = animation;
+//                    enableAllKeys(false);
+                }
 
-                    }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    autoReboundAnimator = null;
+//                    enableAllKeys(true);
+                }
 
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        autoReboundAnimator = null;
-                    }
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    autoReboundAnimator = null;
+//                    enableAllKeys(true);
+                }
 
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-                        autoReboundAnimator = null;
-                    }
+                @Override
+                public void onAnimationRepeat(Animator animation) {
 
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
-                });
-                autoReboundAnimator.start();
-            }
+                }
+            });
+            animator.start();
         }
     }
 
