@@ -227,7 +227,7 @@ public class KeyBoardView extends LinearLayout {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (isCanDrag()) {
+                if (isCanDrag() && !intoDragModel) {
                     autoRebound();
                 }
                 break;
@@ -344,7 +344,6 @@ public class KeyBoardView extends LinearLayout {
         this.keyHeight = keyHeight;
         this.keySpace = space;
 //        typeface = Typeface.createFromAsset(getContext().getAssets(), "arial_old.ttf");
-        setPadding(space, space, space, space);
     }
 
     /**
@@ -369,8 +368,16 @@ public class KeyBoardView extends LinearLayout {
             column++;
             maxWeight = column;
         }
-        size[0] = keyWidth * column + (column + 1) * 2 * keySpace;
-        size[1] = keyHeight * row + (row + 1) * 2 * keySpace;
+        size[0] = getPaddingLeft() + (keyWidth + 2 * keySpace) * column + getPaddingRight();
+        //宽度大于屏幕宽度，重新计算按键的宽度
+        if (size[0] > getResources().getDisplayMetrics().widthPixels) {
+            final int tempKeyWidth = keyWidth;
+            int availableWidth = getResources().getDisplayMetrics().widthPixels - getPaddingLeft() - getPaddingRight() - keySpace * 2 * column;
+            keyWidth = availableWidth / column;
+            size[0] = getPaddingLeft() + (keyWidth + 2 * keySpace) * column + getPaddingRight();
+            keyHeight = keyWidth * keyHeight / tempKeyWidth;
+        }
+        size[1] = getPaddingTop() + (keyHeight + 2 * keySpace) * row + getPaddingBottom();
         for (int i = 0; i < row; i++) {
             List<KeyBean> tempKeys = keys.get(i);
             LinearLayout layout = new LinearLayout(getContext());
