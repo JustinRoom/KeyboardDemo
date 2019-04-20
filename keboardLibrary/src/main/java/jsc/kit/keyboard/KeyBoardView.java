@@ -117,7 +117,7 @@ public class KeyBoardView extends LinearLayout {
     private Typeface typeface = null;
     //是否支持拖动
     private @DragSupportModel
-    String curDragSupportModel = ALL_DIRECTION;
+    String curDragSupportModel = ONLY_VERTICAL;
     //键盘拖动时touch坐标
     private float touchX;
     private float touchY;
