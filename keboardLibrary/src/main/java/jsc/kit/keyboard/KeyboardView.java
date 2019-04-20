@@ -133,9 +133,6 @@ public class KeyboardView extends LinearLayout {
     private int keyVerticalSpace;
     //存储键盘的尺寸。size[0]为键盘宽度，size[1]为键盘高度
     private int[] size = new int[2];
-    //数字键盘样式：水平样式、9宫格样式
-    private @KeyUtils.KeyboardType
-    String numberKeyboardType;
     //键盘类型。目前只支持三种：数字键盘、字母键盘、数字+字混合键盘
     private @KeyUtils.KeyboardType
     String keyboardType;
@@ -175,11 +172,10 @@ public class KeyboardView extends LinearLayout {
             keyHeight = keyWidth * 3 / 5;
         initKeySize(keyWidth, keyHeight);
         initKeySpace(horizontalSpace, verticalSpace);
-        setNumberKeyboardType(KeyUtils.TYPE_NINE_PALACE_NUMBER);
         if (isInEditMode())
             switch (boardType) {
                 case 0:
-                    show(getNumberKeyboardType());
+                    show(KeyUtils.TYPE_NINE_PALACE_NUMBER);
                     break;
                 case 1:
                     showNumberKeys = false;
@@ -458,10 +454,10 @@ public class KeyboardView extends LinearLayout {
     }
 
     private int getKeyBackground(int key) {
-        if (KeyUtils.isSpecialKey(key))
-            return R.drawable.key_special_key_background_ripple;
         if (key == KeyUtils.KEY_NEXT)
             return R.drawable.key_next_key_background_ripple;
+        if (KeyUtils.isFunctionKey(key))
+            return R.drawable.key_special_key_background_ripple;
         return R.drawable.key_normal_key_background_ripple;
     }
 
@@ -484,18 +480,14 @@ public class KeyboardView extends LinearLayout {
             return;
         KeyBean bean = keyView.getBean();
         switch (bean.getKey()) {
-            case KeyUtils.KEY_AA://切换大小写
-                toggleUpperCase(!upperCase);
-                break;
-            case KeyUtils.KEY_ABC://切换字母键
-                show(showNumberKeys ? KeyUtils.TYPE_LETTER_NUMBER : KeyUtils.TYPE_LETTER);
-                break;
-            case KeyUtils.KEY_NUM://字母键盘上显隐数字键
-                toggleNumberKeys();
-                updateNumKey();
-                break;
             case KeyUtils.KEY_CLOSE://关闭
                 closeKeyboard(true);
+                break;
+            case KeyUtils.KEY_SCALE://键盘缩放
+                autoScale();
+                break;
+            case KeyUtils.KEY_ABC://切换为字母键盘
+                show(showNumberKeys ? KeyUtils.TYPE_LETTER_NUMBER : KeyUtils.TYPE_LETTER);
                 break;
             case KeyUtils.KEY_DELETE://删除键
                 deleteInput();
@@ -506,8 +498,20 @@ public class KeyboardView extends LinearLayout {
             case KeyUtils.KEY_123://切换为带"ABC"按键的数字键盘
                 show(KeyUtils.TYPE_NINE_PALACE_NUMBER_WITH_ABC);
                 break;
-            case KeyUtils.KEY_SCALE://键盘缩放
-                autoScale();
+            case KeyUtils.KEY_AA://切换大小写
+                toggleUpperCase(!upperCase);
+                break;
+            case KeyUtils.KEY_NUM://字母键盘上显隐数字键
+                toggleNumberKeys();
+                updateNumKey();
+                break;
+            case KeyUtils.KEY_ENTER:
+                break;
+            case KeyUtils.KEY_SYMBOL:
+                show(KeyUtils.TYPE_SYMBOL);
+                break;
+            case KeyUtils.KEY_BACK:
+                show(showNumberKeys ? KeyUtils.TYPE_LETTER_NUMBER : KeyUtils.TYPE_LETTER);
                 break;
             default:
                 insertInput(bean);
@@ -816,25 +820,25 @@ public class KeyboardView extends LinearLayout {
 
     private void playClickAnimation(KeyView keyView) {
         int key = keyView.getBean().getKey();
+        //功能键不执行点击动画
+        if (KeyUtils.isFunctionKey(key)
+                || KeyUtils.isNotKey(key)
+                || key == KeyUtils.KEY_SPACE)
+            return;
         Animator oldAnimator = animatorSparseArray.get(key);
         if (oldAnimator != null) {
             oldAnimator.cancel();
         }
-        if (KeyUtils.isNumberKey(key)
-                || KeyUtils.isLetterKey(key)
-                || key == KeyUtils.KEY_DOT
-                || key == KeyUtils.KEY_SIGNED) {
-            float scaleX = keyView.getScaleX();
-            float scaleY = keyView.getScaleY();
-            ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(
-                    keyView,
-                    PropertyValuesHolder.ofFloat(View.SCALE_X, scaleX, scaleX * 1.2f, scaleX),
-                    PropertyValuesHolder.ofFloat(View.SCALE_Y, scaleY, scaleY * 1.2f, scaleY)
-            ).setDuration(200);
-            animator.addListener(new KeyScaleAnimatorListener(key, scaleX, scaleY));
-            animatorSparseArray.put(key, animator);
-            animator.start();
-        }
+        float scaleX = keyView.getScaleX();
+        float scaleY = keyView.getScaleY();
+        ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(
+                keyView,
+                PropertyValuesHolder.ofFloat(View.SCALE_X, scaleX, scaleX * 1.2f, scaleX),
+                PropertyValuesHolder.ofFloat(View.SCALE_Y, scaleY, scaleY * 1.2f, scaleY)
+        ).setDuration(200);
+        animator.addListener(new KeyScaleAnimatorListener(key, scaleX, scaleY));
+        animatorSparseArray.put(key, animator);
+        animator.start();
     }
 
     private void toggleUpperCase(boolean upperCase) {
@@ -966,12 +970,11 @@ public class KeyboardView extends LinearLayout {
             case InputType.TYPE_CLASS_NUMBER:
             case InputType.TYPE_CLASS_PHONE:
             case InputType.TYPE_CLASS_DATETIME:
-                show(getNumberKeyboardType());
+                show(KeyUtils.TYPE_NINE_PALACE_NUMBER);
                 break;
             default:
                 String keyboardType = getKeyboardType();
                 if (TextUtils.isEmpty(keyboardType)
-                        || KeyUtils.TYPE_HORIZONTAL_NUMBER.equals(keyboardType)
                         || KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(keyboardType))
                     keyboardType = showNumberKeys ? KeyUtils.TYPE_LETTER_NUMBER : KeyUtils.TYPE_LETTER;
                 show(keyboardType);
@@ -1000,7 +1003,6 @@ public class KeyboardView extends LinearLayout {
         if (!keyboardType.equals(getKeyboardType())) {
             setKeyboardType(keyboardType);
             switch (keyboardType) {
-                case KeyUtils.TYPE_HORIZONTAL_NUMBER:
                 case KeyUtils.TYPE_NINE_PALACE_NUMBER:
                     showNumberKeyboard();
                     break;
@@ -1010,6 +1012,9 @@ public class KeyboardView extends LinearLayout {
                 case KeyUtils.TYPE_LETTER:
                 case KeyUtils.TYPE_LETTER_NUMBER:
                     showLetterKeyboard();
+                    break;
+                case KeyUtils.TYPE_SYMBOL:
+                    showSymbolKeyboard();
                     break;
             }
         }
@@ -1055,6 +1060,10 @@ public class KeyboardView extends LinearLayout {
         });
     }
 
+    private void showSymbolKeyboard() {
+        createKeys();
+    }
+
     private void setKeyboardType(@KeyUtils.KeyboardType String keyboardType) {
         this.keyboardType = keyboardType;
         if (keyboardType.equals(KeyUtils.TYPE_LETTER_NUMBER)) {
@@ -1066,21 +1075,6 @@ public class KeyboardView extends LinearLayout {
 
     public String getKeyboardType() {
         return keyboardType;
-    }
-
-    public String getNumberKeyboardType() {
-        return numberKeyboardType;
-    }
-
-    /**
-     * @param numberKeyboardType one of {@link KeyUtils#TYPE_HORIZONTAL_NUMBER、{@link KeyUtils#TYPE_NINE_PALACE_NUMBER
-     */
-    public void setNumberKeyboardType(@KeyUtils.KeyboardType String numberKeyboardType) {
-        if (KeyUtils.TYPE_HORIZONTAL_NUMBER.equals(numberKeyboardType)
-                || KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(numberKeyboardType))
-            this.numberKeyboardType = numberKeyboardType;
-        else
-            throw new IllegalArgumentException("Must be one of TYPE_HORIZONTAL_NUMBER、TYPE_NINE_PALACE_NUMBER.");
     }
 
     private boolean isCanDrag() {
