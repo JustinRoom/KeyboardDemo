@@ -36,6 +36,7 @@ public class KeyboardFragment extends BaseFragment implements View.OnClickListen
         int keySpace = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
         keyboardView.initKeyBoard(keyWidth, keyHeight, keySpace);
         keyboardView.addAllInputView(root);
+        keyboardView.setCurDragSupportModel(KeyBoardView.ALL_DIRECTION);
 //        keyboardView.setNumberKeyBoardType(KeyUtils.TYPE_HORIZONTAL_NUMBER);
 //        keyboardView.setSupportMoving(false);
 //        keyboardView.setCreateKeyListener(new KeyBoardView.onCreateKeyListener() {

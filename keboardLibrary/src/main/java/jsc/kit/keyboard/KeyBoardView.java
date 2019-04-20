@@ -7,15 +7,18 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -28,6 +31,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 /*
@@ -54,6 +59,30 @@ import java.util.List;
  * @author jsc
  */
 public class KeyBoardView extends LinearLayout {
+
+    private static final String TAG = "keyboard";
+
+    /**
+     * 仅支持水平方向上拖动
+     */
+    public static final String ONLY_HORIZONTAL = "horizontal";
+    /**
+     * 仅支持垂直方向上拖动
+     */
+    public static final String ONLY_VERTICAL = "vertical";
+    /**
+     * 支持任意方向上拖动
+     */
+    public static final String ALL_DIRECTION = "all";
+    /**
+     * 不支持拖动
+     */
+    public static final String NONE = "none";
+
+    @StringDef({ONLY_HORIZONTAL, ONLY_VERTICAL, ALL_DIRECTION, NONE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface DragSupportModel {
+    }
 
     //存储键盘上的按键view
     private SparseArray<KeyView> viewSparseArray = new SparseArray<>();
@@ -87,13 +116,15 @@ public class KeyBoardView extends LinearLayout {
     //按键字体
     private Typeface typeface = null;
     //是否支持拖动
-    private boolean supportMoving = true;
+    private @DragSupportModel
+    String curDragSupportModel = ALL_DIRECTION;
     //键盘拖动时touch坐标
     private float touchX;
     private float touchY;
     //是否处于拖动模式
-    private boolean intoMoveModel;
+    private boolean intoDragModel;
     private int touchedPointerId = -1;
+    private Rect rect = new Rect();
     //按键的基本宽度
     private int keyWidth;
     //按键的基本高度
@@ -168,7 +199,7 @@ public class KeyBoardView extends LinearLayout {
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 //当没有进入键盘拖动模式
-                if (supportMoving && !intoMoveModel) {
+                if (isCanDrag() && !intoDragModel) {
                     //这里使用PointerId防止多手指touch混乱问题
                     touchedPointerId = ev.getPointerId(0);
                     touchX = ev.getX();
@@ -176,7 +207,7 @@ public class KeyBoardView extends LinearLayout {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (supportMoving && !intoMoveModel && touchedPointerId == ev.getPointerId(0)) {
+                if (isCanDrag() && !intoDragModel && touchedPointerId == ev.getPointerId(0)) {
                     float tempX = ev.getX();
                     float tempY = ev.getY();
                     float dx = touchX - tempX;
@@ -184,7 +215,7 @@ public class KeyBoardView extends LinearLayout {
                     //当在任意方向上滑动大于等于8pixels时进入键盘拖动模式
                     if (Math.abs(dx) >= 8 || Math.abs(dy) >= 8) {
                         if (!isScaled()) {
-                            intoMoveModel = true;
+                            intoDragModel = true;
                             //进入拖动模式后，所有按键不可用
                             enableAllKeys(false);
                         }
@@ -196,18 +227,18 @@ public class KeyBoardView extends LinearLayout {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (supportMoving && !intoMoveModel) {
+                if (isCanDrag() && !intoDragModel) {
                     autoRebound();
                 }
                 break;
         }
-        return intoMoveModel;
+        return intoDragModel;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //如果键盘是被缩小了，则不处理touch事件
-        if (isScaled() || !supportMoving)
+        if (isScaled() || !isCanDrag())
             return super.onTouchEvent(event);
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
@@ -222,16 +253,16 @@ public class KeyBoardView extends LinearLayout {
                     float tempY = event.getY();
                     float dx = touchX - tempX;
                     float dy = touchY - tempY;
-                    executeMove(-dx, -dy);
+                    executeDrag(-dx, -dy);
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (intoMoveModel && touchedPointerId == event.getPointerId(0)) {
+                if (intoDragModel && touchedPointerId == event.getPointerId(0)) {
                     //抬起手指时，键盘智能复位
                     autoRebound();
                     //退出拖动模式
-                    intoMoveModel = false;
+                    intoDragModel = false;
                     //恢复所有按键可用
                     enableAllKeys(true);
                 }
@@ -472,27 +503,37 @@ public class KeyBoardView extends LinearLayout {
         }
     }
 
-    private void executeMove(float dx, float dy) {
-        float totalX = getTranslationX() + dx;
-        float totalY = getTranslationY() + dy;
-        //限制拖动区域
-        if (getParent() != null) {
-            View parent = (View) getParent();
-            if (size[0] <= parent.getWidth()) {
-                float minX = 0 - getLeft();
-                float maxX = parent.getWidth() - getRight();
-                if (totalX < minX) totalX = minX;
-                if (totalX > maxX) totalX = maxX;
-            }
-            if (size[1] <= parent.getHeight()) {
-                float minY = getStatusBarHeight() - getTop();
-//                        float maxY = (parent.getHeight() + (size[1] - keyHeight + keySpace * 2)) - getBottom();
-                if (totalY < minY) totalY = minY;
-//                        if (totalY > maxY) totalY = maxY;
-            }
+    private void executeDrag(float dx, float dy) {
+        ViewGroup parent = (ViewGroup) getParent();
+        int width = parent.getWidth();
+        int height = parent.getHeight();
+        int keyHeightWithSpace = keyHeight + keySpace * 2;
+        getHitRect(rect);
+        Log.i(TAG, "executeDrag: " + rect.toString());
+        if (dx + rect.left < 0) {
+            dx = 0 - rect.left;
         }
-        setTranslationX(totalX);
-        setTranslationY(totalY);
+        if (dx + rect.right > width) {
+            dx = width - rect.right;
+        }
+        if (dy + rect.top < getStatusBarHeight() + keyHeightWithSpace + getPaddingBottom() - size[1]) {
+            dy = getStatusBarHeight() + keyHeightWithSpace + getPaddingBottom() - size[1] - rect.top;
+        }
+        if (dy + rect.bottom > height + size[1] - keyHeightWithSpace - getPaddingTop()) {
+            dy = height + size[1] - keyHeightWithSpace - getPaddingTop() - rect.bottom;
+        }
+        switch (curDragSupportModel) {
+            case ONLY_HORIZONTAL:
+                setTranslationX(getTranslationX() + dx);
+                break;
+            case ONLY_VERTICAL:
+                setTranslationY(getTranslationY() + dy);
+                break;
+            case ALL_DIRECTION:
+                setTranslationX(getTranslationX() + dx);
+                setTranslationY(getTranslationY() + dy);
+                break;
+        }
     }
 
     private void autoRebound() {
@@ -614,7 +655,7 @@ public class KeyBoardView extends LinearLayout {
     public void showKeyboard(boolean withAnimation) {
         if (getVisibility() == VISIBLE)
             return;
-        if (supportMoving || !withAnimation || getTranslationY() == 0) {
+        if (isCanDrag() || !withAnimation || getTranslationY() == 0) {
             show();
             return;
         }
@@ -650,7 +691,7 @@ public class KeyBoardView extends LinearLayout {
     public void closeKeyboard(boolean withAnimation) {
         if (getVisibility() != VISIBLE)
             return;
-        if (supportMoving || !withAnimation) {
+        if (isCanDrag() || !withAnimation) {
             hide();
             return;
         }
@@ -1011,12 +1052,12 @@ public class KeyBoardView extends LinearLayout {
             throw new IllegalArgumentException("Must be one of TYPE_HORIZONTAL_NUMBER、TYPE_NINE_PALACE_NUMBER.");
     }
 
-    public boolean isSupportMoving() {
-        return supportMoving;
+    private boolean isCanDrag() {
+        return !TextUtils.equals(curDragSupportModel, NONE);
     }
 
-    public void setSupportMoving(boolean supportMoving) {
-        this.supportMoving = supportMoving;
+    public void setCurDragSupportModel(@DragSupportModel String curDragSupportModel) {
+        this.curDragSupportModel = curDragSupportModel;
     }
 
     public void setDefaultUpperCase(boolean upperCase) {
