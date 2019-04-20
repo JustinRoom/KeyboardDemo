@@ -86,8 +86,6 @@ public class KeyUtils {
     public static final int KEY_Y = 0x034;
     public static final int KEY_Z = 0x035;
     //symbol
-    public static final int KEY_SYMBOL_038 = 0x038;
-    public static final int KEY_SYMBOL_039 = 0x039;
     public static final int KEY_SYMBOL_040 = 0x040;
     public static final int KEY_SYMBOL_041 = 0x041;
     public static final int KEY_SYMBOL_042 = 0x042;
@@ -142,7 +140,6 @@ public class KeyUtils {
             KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T,
             KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z,
             //symbol
-            KEY_SYMBOL_038, KEY_SYMBOL_039,
             KEY_SYMBOL_040, KEY_SYMBOL_041, KEY_SYMBOL_042, KEY_SYMBOL_043, KEY_SYMBOL_044,
             KEY_SYMBOL_045, KEY_SYMBOL_046, KEY_SYMBOL_047, KEY_SYMBOL_048, KEY_SYMBOL_049,
             KEY_SYMBOL_050, KEY_SYMBOL_051, KEY_SYMBOL_052, KEY_SYMBOL_053, KEY_SYMBOL_054,
@@ -206,9 +203,6 @@ public class KeyUtils {
         putKey(new KeyBean(KEY_Y, "y"));
         putKey(new KeyBean(KEY_Z, "z"));
         //special
-        putKey(new KeyBean(KEY_SYMBOL_038, "•", "."));
-        putKey(new KeyBean(KEY_SYMBOL_039, "-"));
-
         putKey(new KeyBean(KEY_SYMBOL_040, "!"));
         putKey(new KeyBean(KEY_SYMBOL_041, "@"));
         putKey(new KeyBean(KEY_SYMBOL_042, "#"));
@@ -217,28 +211,26 @@ public class KeyUtils {
         putKey(new KeyBean(KEY_SYMBOL_045, "^"));
         putKey(new KeyBean(KEY_SYMBOL_046, "&"));
         putKey(new KeyBean(KEY_SYMBOL_047, "*"));
-        putKey(new KeyBean(KEY_SYMBOL_048, "("));
-        putKey(new KeyBean(KEY_SYMBOL_049, ")"));
-
-        putKey(new KeyBean(KEY_SYMBOL_050, "["));
-        putKey(new KeyBean(KEY_SYMBOL_051, "]"));
-        putKey(new KeyBean(KEY_SYMBOL_052, "{"));
-        putKey(new KeyBean(KEY_SYMBOL_053, "}"));
-        putKey(new KeyBean(KEY_SYMBOL_054, "\\"));
-        putKey(new KeyBean(KEY_SYMBOL_055, "/"));
-        putKey(new KeyBean(KEY_SYMBOL_056, ";"));
-        putKey(new KeyBean(KEY_SYMBOL_057, ":"));
-        putKey(new KeyBean(KEY_SYMBOL_058, "'"));
-        putKey(new KeyBean(KEY_SYMBOL_059, "\""));
-
-        putKey(new KeyBean(KEY_SYMBOL_060, "<"));
-        putKey(new KeyBean(KEY_SYMBOL_061, ">"));
+        putKey(new KeyBean(KEY_SYMBOL_048, "(\u3000)", "()"));
+        putKey(new KeyBean(KEY_SYMBOL_049, "[\u3000]", "[]"));
+        putKey(new KeyBean(KEY_SYMBOL_050, "{\u3000}", "{}"));
+        putKey(new KeyBean(KEY_SYMBOL_051, "<\u3000>", "<>"));
+        putKey(new KeyBean(KEY_SYMBOL_052, "\"", "\"\""));
+        putKey(new KeyBean(KEY_SYMBOL_053, "\'", "\'\'"));
+        putKey(new KeyBean(KEY_SYMBOL_054, "|"));
+        putKey(new KeyBean(KEY_SYMBOL_055, "\\"));
+        putKey(new KeyBean(KEY_SYMBOL_056, "?"));
+        putKey(new KeyBean(KEY_SYMBOL_057, "/"));
+        putKey(new KeyBean(KEY_SYMBOL_058, ":"));
+        putKey(new KeyBean(KEY_SYMBOL_059, ";"));
+        putKey(new KeyBean(KEY_SYMBOL_060, ","));
+        putKey(new KeyBean(KEY_SYMBOL_061, "•","."));
         putKey(new KeyBean(KEY_SYMBOL_062, ","));
-        putKey(new KeyBean(KEY_SYMBOL_063, "`"));
+        putKey(new KeyBean(KEY_SYMBOL_063, "`", "``"));
         putKey(new KeyBean(KEY_SYMBOL_064, "~"));
         putKey(new KeyBean(KEY_SYMBOL_065, "+"));
         putKey(new KeyBean(KEY_SYMBOL_066, "="));
-        putKey(new KeyBean(KEY_SYMBOL_067, "?"));
+        putKey(new KeyBean(KEY_SYMBOL_067, "-"));
         putKey(new KeyBean(KEY_SYMBOL_068, "_"));
         putKey(new KeyBean(KEY_SPACE, "Space", "\u2000"));
         //function
@@ -296,7 +288,7 @@ public class KeyUtils {
             keys1.add(keys.get(KEY_4));
             keys1.add(keys.get(KEY_5));
             keys1.add(keys.get(KEY_6));
-            keys1.add(keys.get(KEY_SYMBOL_039));
+            keys1.add(keys.get(KEY_SYMBOL_067));
             ninePalaceNumberKeys.add(keys1);
             //第三行
             List<KeyBean> keys2 = new ArrayList<>();
@@ -307,12 +299,12 @@ public class KeyUtils {
             ninePalaceNumberKeys.add(keys2);
             //第四行
             List<KeyBean> keys3 = new ArrayList<>();
-            keys3.add(keys.get(KEY_SYMBOL_038));
+            keys3.add(keys.get(KEY_SYMBOL_061));
             keys3.add(keys.get(KEY_0));
             keys3.add(keys.get(KEY_NEXT));
             ninePalaceNumberKeys.add(keys3);
         }
-        updateHorizontalWeight(KEY_SYMBOL_039, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_067, 1.0f);
         updateHorizontalWeight(KEY_DELETE, 1.0f);
         updateHorizontalWeight(KEY_NEXT, 2.0f);
         return ninePalaceNumberKeys;
@@ -332,7 +324,7 @@ public class KeyUtils {
             keys1.add(keys.get(KEY_4));
             keys1.add(keys.get(KEY_5));
             keys1.add(keys.get(KEY_6));
-            keys1.add(keys.get(KEY_SYMBOL_039));
+            keys1.add(keys.get(KEY_SYMBOL_067));
             ninePalaceNumberKeysWithABC.add(keys1);
             //第三行
             List<KeyBean> keys2 = new ArrayList<>();
@@ -345,11 +337,11 @@ public class KeyUtils {
             List<KeyBean> keys3 = new ArrayList<>();
             keys3.add(keys.get(KEY_ABC));
             keys3.add(keys.get(KEY_0));
-            keys3.add(keys.get(KEY_SYMBOL_038));
+            keys3.add(keys.get(KEY_SYMBOL_061));
             keys3.add(keys.get(KEY_NEXT));
             ninePalaceNumberKeysWithABC.add(keys3);
         }
-        updateHorizontalWeight(KEY_SYMBOL_039, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_067, 1.0f);
         updateHorizontalWeight(KEY_DELETE, 1.0f);
         updateHorizontalWeight(KEY_NEXT, 1.0f);
         return ninePalaceNumberKeysWithABC;
@@ -387,7 +379,7 @@ public class KeyUtils {
             letterKeys.add(keys1);
             //第三行
             List<KeyBean> keys2 = new ArrayList<>();
-            keys2.add(keys.get(KEY_SYMBOL_039));
+            keys2.add(keys.get(KEY_SYMBOL_067));
             keys2.add(keys.get(KEY_Z));
             keys2.add(keys.get(KEY_X));
             keys2.add(keys.get(KEY_C));
@@ -395,7 +387,7 @@ public class KeyUtils {
             keys2.add(keys.get(KEY_B));
             keys2.add(keys.get(KEY_N));
             keys2.add(keys.get(KEY_M));
-            keys2.add(keys.get(KEY_SYMBOL_038));
+            keys2.add(keys.get(KEY_SYMBOL_061));
             keys2.add(keys.get(KEY_DELETE));
             letterKeys.add(keys2);
             //第四行
@@ -408,7 +400,7 @@ public class KeyUtils {
             letterKeys.add(keys3);
         }
         updateHorizontalWeight(KEY_NUM, 1.75f);
-        updateHorizontalWeight(KEY_SYMBOL_039, 1.25f);
+        updateHorizontalWeight(KEY_SYMBOL_067, 1.25f);
         updateHorizontalWeight(KEY_DELETE, 1.75f);
         updateHorizontalWeight(KEY_AA, 1.75f);
         updateHorizontalWeight(KEY_SPACE, 5.0f);
@@ -464,7 +456,7 @@ public class KeyUtils {
             letterNumberKeys.add(keys2);
             //第四行
             List<KeyBean> keys3 = new ArrayList<>();
-            keys3.add(keys.get(KEY_SYMBOL_039));
+            keys3.add(keys.get(KEY_SYMBOL_067));
             keys3.add(keys.get(KEY_Z));
             keys3.add(keys.get(KEY_X));
             keys3.add(keys.get(KEY_C));
@@ -472,7 +464,7 @@ public class KeyUtils {
             keys3.add(keys.get(KEY_B));
             keys3.add(keys.get(KEY_N));
             keys3.add(keys.get(KEY_M));
-            keys3.add(keys.get(KEY_SYMBOL_038));
+            keys3.add(keys.get(KEY_SYMBOL_061));
             keys3.add(keys.get(KEY_DELETE));
             letterNumberKeys.add(keys3);
             //第五行
@@ -485,7 +477,7 @@ public class KeyUtils {
             letterNumberKeys.add(keys4);
         }
         updateHorizontalWeight(KEY_NUM, 1.75f);
-        updateHorizontalWeight(KEY_SYMBOL_039, 1.25f);
+        updateHorizontalWeight(KEY_SYMBOL_067, 1.25f);
         updateHorizontalWeight(KEY_DELETE, 1.75f);
         updateHorizontalWeight(KEY_AA, 1.75f);
         updateHorizontalWeight(KEY_SPACE, 5.0f);
@@ -508,31 +500,29 @@ public class KeyUtils {
             symbolKeys.add(keys0);
             //第二行
             List<KeyBean> keys1 = new ArrayList<>();
-            keys1.add(keys.get(KEY_SYMBOL_047));
+            keys1.add(keys.get(KEY_SYMBOL_052));
             keys1.add(keys.get(KEY_SYMBOL_048));
             keys1.add(keys.get(KEY_SYMBOL_049));
             keys1.add(keys.get(KEY_SYMBOL_050));
             keys1.add(keys.get(KEY_SYMBOL_051));
-            keys1.add(keys.get(KEY_SYMBOL_052));
             keys1.add(keys.get(KEY_SYMBOL_053));
-            keys1.add(keys.get(KEY_SYMBOL_068));
             symbolKeys.add(keys1);
             //第三行
             List<KeyBean> keys2 = new ArrayList<>();
             keys2.add(keys.get(KEY_SYMBOL_054));
             keys2.add(keys.get(KEY_SYMBOL_055));
-            keys2.add(keys.get(KEY_SYMBOL_056));
             keys2.add(keys.get(KEY_SYMBOL_057));
+            keys2.add(keys.get(KEY_SYMBOL_056));
             keys2.add(keys.get(KEY_SYMBOL_058));
             keys2.add(keys.get(KEY_SYMBOL_059));
-            keys2.add(keys.get(KEY_SYMBOL_060));
-            keys2.add(keys.get(KEY_SYMBOL_061));
+            keys2.add(keys.get(KEY_SYMBOL_068));
+            keys2.add(keys.get(KEY_SYMBOL_063));
             symbolKeys.add(keys2);
             //第四行
             List<KeyBean> keys3 = new ArrayList<>();
             keys3.add(keys.get(KEY_BACK));
+            keys3.add(keys.get(KEY_SYMBOL_061));
             keys3.add(keys.get(KEY_SYMBOL_062));
-            keys3.add(keys.get(KEY_SYMBOL_063));
             keys3.add(keys.get(KEY_SYMBOL_064));
             keys3.add(keys.get(KEY_SYMBOL_065));
             keys3.add(keys.get(KEY_SYMBOL_066));
@@ -540,6 +530,12 @@ public class KeyUtils {
             keys3.add(keys.get(KEY_DELETE));
             symbolKeys.add(keys3);
         }
+        updateHorizontalWeight(KEY_SYMBOL_048, 1.5f);
+        updateHorizontalWeight(KEY_SYMBOL_049, 1.5f);
+        updateHorizontalWeight(KEY_SYMBOL_050, 1.5f);
+        updateHorizontalWeight(KEY_SYMBOL_051, 1.5f);
+        updateHorizontalWeight(KEY_SYMBOL_061, 1f);
+        updateHorizontalWeight(KEY_SYMBOL_067, 1f);
         updateHorizontalWeight(KEY_DELETE, 1f);
         return symbolKeys;
     }
@@ -577,7 +573,7 @@ public class KeyUtils {
     }
 
     public static boolean isSymbolKey(@KeyCode int key) {
-        return key >= KeyUtils.KEY_SYMBOL_038 && key <= KeyUtils.KEY_SPACE;
+        return key >= KeyUtils.KEY_SYMBOL_061 && key <= KeyUtils.KEY_SPACE;
     }
 
     public static boolean isFunctionKey(@KeyCode int key) {
