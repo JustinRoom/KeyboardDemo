@@ -9,7 +9,6 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,7 +17,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -58,7 +56,7 @@ import java.util.List;
  *
  * @author jsc
  */
-public class KeyBoardView extends LinearLayout {
+public class KeyboardView extends LinearLayout {
 
     private static final String TAG = "keyboard";
 
@@ -100,7 +98,7 @@ public class KeyBoardView extends LinearLayout {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (v instanceof EditText) {
-                showKeyBoardByEditTextInputType((EditText) v);
+                showKeyboardByEditTextInputType((EditText) v);
             }
             return false;
         }
@@ -134,11 +132,11 @@ public class KeyBoardView extends LinearLayout {
     //存储键盘的尺寸。size[0]为键盘宽度，size[1]为键盘高度
     private int[] size = new int[2];
     //数字键盘样式：水平样式、9宫格样式
-    private @KeyUtils.KeyBoardType
-    String numberKeyBoardType;
+    private @KeyUtils.KeyboardType
+    String numberKeyboardType;
     //键盘类型。目前只支持三种：数字键盘、字母键盘、数字+字混合键盘
-    private @KeyUtils.KeyBoardType
-    String keyBoardType;
+    private @KeyUtils.KeyboardType
+    String keyboardType;
     //是否为大写模式
     private boolean upperCase = false;
     //当键盘类型为数字+字混合键盘时，是否显示数字按键
@@ -146,38 +144,38 @@ public class KeyBoardView extends LinearLayout {
     //创建按键时监听
     private onCreateKeyListener createKeyListener = null;
     //键盘的显隐监听
-    private OnKeyBoardListener keyBoardListener = null;
+    private OnKeyboardListener keyboardListener = null;
     //自定义的按键监听
     private OnKeyDownListener keyDownListener = null;
 
     //*********************  Constructors ***********************************//
-    public KeyBoardView(Context context) {
+    public KeyboardView(Context context) {
         this(context, null);
     }
 
-    public KeyBoardView(Context context, @Nullable AttributeSet attrs) {
+    public KeyboardView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public KeyBoardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public KeyboardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setOrientation(VERTICAL);
         int defaultKeyWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, context.getResources().getDisplayMetrics());
         int defaultKeySpace = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, context.getResources().getDisplayMetrics());
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.KeyBoardView, defStyleAttr, 0);
-        int keyWidth = a.getDimensionPixelSize(R.styleable.KeyBoardView_keyWidth, defaultKeyWidth);
-        int keyHeight = a.getDimensionPixelSize(R.styleable.KeyBoardView_keyHeight, 0);
-        int keySpace = a.getDimensionPixelSize(R.styleable.KeyBoardView_keySpace, defaultKeySpace);
-        int boardType = a.getInt(R.styleable.KeyBoardView_keyBoardType, 0);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.KeyboardView, defStyleAttr, 0);
+        int keyWidth = a.getDimensionPixelSize(R.styleable.KeyboardView_keyWidth, defaultKeyWidth);
+        int keyHeight = a.getDimensionPixelSize(R.styleable.KeyboardView_keyHeight, 0);
+        int keySpace = a.getDimensionPixelSize(R.styleable.KeyboardView_keySpace, defaultKeySpace);
+        int boardType = a.getInt(R.styleable.KeyboardView_keyBoardType, 0);
         a.recycle();
         if (keyHeight <= 0)
             keyHeight = keyWidth * 3 / 5;
-        initKeyBoard(keyWidth, keyHeight, keySpace);
-        setNumberKeyBoardType(KeyUtils.TYPE_NINE_PALACE_NUMBER);
+        initKeyboard(keyWidth, keyHeight, keySpace);
+        setNumberKeyboardType(KeyUtils.TYPE_NINE_PALACE_NUMBER);
         if (isInEditMode())
             switch (boardType) {
                 case 0:
-                    show(getNumberKeyBoardType());
+                    show(getNumberKeyboardType());
                     break;
                 case 1:
                     showNumberKeys = false;
@@ -333,12 +331,12 @@ public class KeyBoardView extends LinearLayout {
         return focusedEditText;
     }
 
-    public void initKeyBoard(int keyWidth) {
+    public void initKeyboard(int keyWidth) {
         int defaultKeySpace = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getContext().getResources().getDisplayMetrics());
-        initKeyBoard(keyWidth, keyWidth * 3 / 5, defaultKeySpace);
+        initKeyboard(keyWidth, keyWidth * 3 / 5, defaultKeySpace);
     }
 
-    public void initKeyBoard(int keyWidth, int keyHeight, int space) {
+    public void initKeyboard(int keyWidth, int keyHeight, int space) {
         this.keyWidth = keyWidth;
         this.keyHeight = keyHeight;
         this.keySpace = space;
@@ -350,7 +348,7 @@ public class KeyBoardView extends LinearLayout {
      *
      * @see #size
      */
-    public int[] getKeyBoardSize() {
+    public int[] getKeyboardSize() {
         return size;
     }
 
@@ -358,8 +356,8 @@ public class KeyBoardView extends LinearLayout {
      * 创建按键
      */
     private void createKeys() {
-        final SparseArray<KeyView> cache = resetKeys();
-        List<List<KeyBean>> keys = KeyUtils.loadKeys(getKeyBoardType());
+        resetKeys();
+        List<List<KeyBean>> keys = KeyUtils.loadKeys(getKeyboardType());
         float maxWeight = getLayoutWeight(keys);
         int row = keys.size();
         int column = (int) maxWeight;
@@ -384,19 +382,16 @@ public class KeyBoardView extends LinearLayout {
             layout.setWeightSum(maxWeight);
             addView(layout, new LayoutParams(size[0], LayoutParams.WRAP_CONTENT));
             for (int j = 0; j < tempKeys.size(); j++) {
-                KeyBean bean = tempKeys.get(j);
-                KeyView keyView = createKey(cache, layout, bean, keyHeight, keySpace);
-                if (!KeyUtils.isNotKey(bean.getKey()))
-                    viewSparseArray.put(bean.getKey(), keyView);
+                createKey(layout, tempKeys.get(j), keyHeight, keySpace);
             }
         }
         toggleUpperCase(upperCase);
         updateNumKey();
     }
 
-    private KeyView createKey(final SparseArray<KeyView> cache, LinearLayout layout, KeyBean bean, int keyHeight, int margin) {
+    private void createKey(LinearLayout layout, KeyBean bean, int keyHeight, int margin) {
         int key = bean.getKey();
-        KeyView keyView = cache.get(key);
+        KeyView keyView = viewSparseArray.get(key);
         if (keyView == null) {
             keyView = new KeyView(getContext());
             keyView.setTypeface(typeface);
@@ -414,6 +409,8 @@ public class KeyBoardView extends LinearLayout {
             keyView.setVisibility(key == KeyUtils.KEY_BLANK ? INVISIBLE : VISIBLE);
             keyView.setBackgroundResource(getKeyBackground(key));
             keyView.setBean(bean);
+            if (!KeyUtils.isNotKey(bean.getKey()))
+                viewSparseArray.put(key, keyView);
         }
         LayoutParams params = new LayoutParams(0, keyHeight, bean.getHorizontalWeight());
         params.leftMargin = margin;
@@ -421,7 +418,6 @@ public class KeyBoardView extends LinearLayout {
         params.topMargin = margin;
         params.bottomMargin = margin;
         layout.addView(keyView, params);
-        return keyView;
     }
 
     private float getLayoutWeight(List<List<KeyBean>> keys) {
@@ -442,7 +438,7 @@ public class KeyBoardView extends LinearLayout {
     }
 
     private float getKeyTextSize(int key) {
-        return createKeyListener == null ? 16 : createKeyListener.getKeyTextSize(getKeyBoardType(), key);
+        return createKeyListener == null ? 16 : createKeyListener.getKeyTextSize(getKeyboardType(), key);
     }
 
     private int getKeyBackground(int key) {
@@ -453,7 +449,7 @@ public class KeyBoardView extends LinearLayout {
         return R.drawable.key_normal_key_background_ripple;
     }
 
-    private void executeKeyBoardReLocation(Animator.AnimatorListener listener) {
+    private void executeKeyboardReLocation(Animator.AnimatorListener listener) {
         ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(
                 this,
                 PropertyValuesHolder.ofFloat(View.TRANSLATION_X, getTranslationX(), 0),
@@ -751,14 +747,14 @@ public class KeyBoardView extends LinearLayout {
 
     private void show() {
         setVisibility(VISIBLE);
-        if (keyBoardListener != null)
-            keyBoardListener.onShow(this);
+        if (keyboardListener != null)
+            keyboardListener.onShow(this);
     }
 
     private void hide() {
         setVisibility(GONE);
-        if (keyBoardListener != null)
-            keyBoardListener.onHide(this);
+        if (keyboardListener != null)
+            keyboardListener.onHide(this);
     }
 
     public void hideIfNecessary() {
@@ -769,7 +765,7 @@ public class KeyBoardView extends LinearLayout {
     public void onResume() {
         final EditText focusedView = getFocusedEditText();
         if (focusedView != null) {
-            showKeyBoardByEditTextInputType(focusedView);
+            showKeyboardByEditTextInputType(focusedView);
         }
     }
 
@@ -865,16 +861,16 @@ public class KeyBoardView extends LinearLayout {
         }
         index++;
         editTexts.get(index).requestFocus();
-        showKeyBoardByEditTextInputType(editTexts.get(index));
+        showKeyboardByEditTextInputType(editTexts.get(index));
     }
 
     public final void toggleNumberKeys() {
-        if (KeyUtils.TYPE_LETTER_NUMBER.equals(getKeyBoardType())) {
+        if (KeyUtils.TYPE_LETTER_NUMBER.equals(getKeyboardType())) {
             showNumberKeys = false;
             show(KeyUtils.TYPE_LETTER);
             return;
         }
-        if (KeyUtils.TYPE_LETTER.equals(getKeyBoardType())) {
+        if (KeyUtils.TYPE_LETTER.equals(getKeyboardType())) {
             showNumberKeys = true;
             show(KeyUtils.TYPE_LETTER_NUMBER);
         }
@@ -884,8 +880,8 @@ public class KeyBoardView extends LinearLayout {
         this.createKeyListener = createKeyListener;
     }
 
-    public void setKeyBoardListener(OnKeyBoardListener keyBoardListener) {
-        this.keyBoardListener = keyBoardListener;
+    public void setKeyboardListener(OnKeyboardListener keyboardListener) {
+        this.keyboardListener = keyboardListener;
     }
 
     public void setKeyDownListener(OnKeyDownListener keyDownListener) {
@@ -942,7 +938,7 @@ public class KeyBoardView extends LinearLayout {
         editTexts.clear();
     }
 
-    private void showKeyBoardByEditTextInputType(EditText editText) {
+    private void showKeyboardByEditTextInputType(EditText editText) {
         int inputType = editText.getInputType();
         int imeOptions = editText.getImeOptions();
         if (inputType == InputType.TYPE_NULL) {
@@ -954,10 +950,10 @@ public class KeyBoardView extends LinearLayout {
             case InputType.TYPE_CLASS_NUMBER:
             case InputType.TYPE_CLASS_PHONE:
             case InputType.TYPE_CLASS_DATETIME:
-                show(getNumberKeyBoardType());
+                show(getNumberKeyboardType());
                 break;
             default:
-                String keyboardType = getKeyBoardType();
+                String keyboardType = getKeyboardType();
                 if (TextUtils.isEmpty(keyboardType)
                         || KeyUtils.TYPE_HORIZONTAL_NUMBER.equals(keyboardType)
                         || KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(keyboardType))
@@ -984,10 +980,10 @@ public class KeyBoardView extends LinearLayout {
         return false;
     }
 
-    private void show(@KeyUtils.KeyBoardType String keyBoardType) {
-        if (!keyBoardType.equals(getKeyBoardType())) {
-            setKeyBoardType(keyBoardType);
-            switch (keyBoardType) {
+    private void show(@KeyUtils.KeyboardType String keyboardType) {
+        if (!keyboardType.equals(getKeyboardType())) {
+            setKeyboardType(keyboardType);
+            switch (keyboardType) {
                 case KeyUtils.TYPE_HORIZONTAL_NUMBER:
                 case KeyUtils.TYPE_NINE_PALACE_NUMBER:
                     showNumberKeyboard();
@@ -997,7 +993,7 @@ public class KeyBoardView extends LinearLayout {
                     break;
                 case KeyUtils.TYPE_LETTER:
                 case KeyUtils.TYPE_LETTER_NUMBER:
-                    showLetterKeyBoard();
+                    showLetterKeyboard();
                     break;
             }
         }
@@ -1015,12 +1011,12 @@ public class KeyBoardView extends LinearLayout {
         createKeys();
     }
 
-    private void showLetterKeyBoard() {
+    private void showLetterKeyboard() {
         if (getTranslationX() == 0 && getTranslationY() == 0) {
             createKeys();
             return;
         }
-        executeKeyBoardReLocation(new Animator.AnimatorListener() {
+        executeKeyboardReLocation(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
 
@@ -1043,30 +1039,30 @@ public class KeyBoardView extends LinearLayout {
         });
     }
 
-    private void setKeyBoardType(@KeyUtils.KeyBoardType String keyBoardType) {
-        this.keyBoardType = keyBoardType;
-        if (keyBoardType.equals(KeyUtils.TYPE_LETTER_NUMBER)) {
+    private void setKeyboardType(@KeyUtils.KeyboardType String keyboardType) {
+        this.keyboardType = keyboardType;
+        if (keyboardType.equals(KeyUtils.TYPE_LETTER_NUMBER)) {
             showNumberKeys = true;
-        } else if (keyBoardType.equals(KeyUtils.TYPE_LETTER)) {
+        } else if (keyboardType.equals(KeyUtils.TYPE_LETTER)) {
             showNumberKeys = false;
         }
     }
 
-    public String getKeyBoardType() {
-        return keyBoardType;
+    public String getKeyboardType() {
+        return keyboardType;
     }
 
-    public String getNumberKeyBoardType() {
-        return numberKeyBoardType;
+    public String getNumberKeyboardType() {
+        return numberKeyboardType;
     }
 
     /**
-     * @param numberKeyBoardType one of {@link KeyUtils#TYPE_HORIZONTAL_NUMBER、{@link KeyUtils#TYPE_NINE_PALACE_NUMBER
+     * @param numberKeyboardType one of {@link KeyUtils#TYPE_HORIZONTAL_NUMBER、{@link KeyUtils#TYPE_NINE_PALACE_NUMBER
      */
-    public void setNumberKeyBoardType(@KeyUtils.KeyBoardType String numberKeyBoardType) {
-        if (KeyUtils.TYPE_HORIZONTAL_NUMBER.equals(numberKeyBoardType)
-                || KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(numberKeyBoardType))
-            this.numberKeyBoardType = numberKeyBoardType;
+    public void setNumberKeyboardType(@KeyUtils.KeyboardType String numberKeyboardType) {
+        if (KeyUtils.TYPE_HORIZONTAL_NUMBER.equals(numberKeyboardType)
+                || KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(numberKeyboardType))
+            this.numberKeyboardType = numberKeyboardType;
         else
             throw new IllegalArgumentException("Must be one of TYPE_HORIZONTAL_NUMBER、TYPE_NINE_PALACE_NUMBER.");
     }
@@ -1075,7 +1071,7 @@ public class KeyBoardView extends LinearLayout {
         return !TextUtils.equals(curDragSupportModel, NONE);
     }
 
-    public void setCurDragSupportModel(@DragSupportModel String curDragSupportModel) {
+    public void setDragSupportModel(@DragSupportModel String curDragSupportModel) {
         this.curDragSupportModel = curDragSupportModel;
     }
 
@@ -1083,7 +1079,7 @@ public class KeyBoardView extends LinearLayout {
         this.upperCase = upperCase;
     }
 
-    public SparseArray<KeyView> resetKeys() {
+    public void resetKeys() {
         size[0] = 0;
         size[1] = 0;
         for (int i = 0; i < getChildCount(); i++) {
@@ -1093,13 +1089,9 @@ public class KeyBoardView extends LinearLayout {
             }
         }
         removeAllViews();
-        SparseArray<KeyView> cache = viewSparseArray.clone();
-        viewSparseArray.clear();
-        return cache;
-    }
-
-    public boolean isShowing() {
-        return viewSparseArray.size() > 0 && getVisibility() == VISIBLE;
+//        SparseArray<KeyView> cache = viewSparseArray.clone();
+//        viewSparseArray.clear();
+//        return cache;
     }
 
     private void ensureInitialized() {
@@ -1109,14 +1101,14 @@ public class KeyBoardView extends LinearLayout {
             throw new IllegalStateException("Initialize first.");
     }
 
-    public interface OnKeyBoardListener {
-        void onShow(KeyBoardView keyBoardView);
+    public interface OnKeyboardListener {
+        void onShow(KeyboardView keyBoardView);
 
-        void onHide(KeyBoardView keyBoardView);
+        void onHide(KeyboardView keyBoardView);
     }
 
     public interface OnKeyDownListener {
-        boolean onKeyDown(KeyBoardView keyBoardView, KeyView keyView);
+        boolean onKeyDown(KeyboardView keyBoardView, KeyView keyView);
     }
 
     public interface onCreateKeyListener {
@@ -1125,7 +1117,7 @@ public class KeyBoardView extends LinearLayout {
          * @param key          the key of view was creating
          * @return label text sie. It's unit is dp.
          */
-        float getKeyTextSize(@KeyUtils.KeyBoardType String keyboardType, @KeyUtils.KeyCode int key);
+        float getKeyTextSize(@KeyUtils.KeyboardType String keyboardType, @KeyUtils.KeyCode int key);
     }
 
     private class CusAnimatorListener implements Animator.AnimatorListener {

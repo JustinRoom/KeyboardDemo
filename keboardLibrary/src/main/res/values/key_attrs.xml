@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="KeyBoardView">
-        <attr name="keyBoardType">
+    <declare-styleable name="KeyboardView">
+        <attr name="keyboardType">
             <enum name="number" value="0" />
             <enum name="letter" value="1" />
             <enum name="letterNumber" value="2" />

@@ -15,7 +15,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import jsc.exam.com.keyboard.R;
-import jsc.kit.keyboard.KeyBoardView;
+import jsc.kit.keyboard.KeyboardView;
 
 /**
  * <br>Email:1006368252@qq.com
@@ -26,7 +26,7 @@ import jsc.kit.keyboard.KeyBoardView;
  */
 public class InputDialog extends DialogFragment {
 
-    private KeyBoardView keyboardView = null;
+    private KeyboardView keyboardView = null;
 
     public static InputDialog newInstance() {
 

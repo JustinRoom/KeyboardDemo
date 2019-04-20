@@ -10,7 +10,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/space_32" />
 
-    <jsc.kit.keyboard.KeyBoardView
+    <jsc.kit.keyboard.KeyboardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
@@ -18,7 +18,7 @@
         android:paddingTop="@dimen/space_8"
         android:paddingRight="@dimen/space_16"
         android:paddingBottom="@dimen/space_8"
-        app:keyBoardType="letterNumber"
+        app:keyboardType="letterNumber"
         app:keyWidth="@dimen/space_48" />
 
 </FrameLayout>

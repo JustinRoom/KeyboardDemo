@@ -42,7 +42,7 @@ public class KeyUtils {
             TYPE_LETTER, TYPE_LETTER,
             TYPE_LETTER_NUMBER})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface KeyBoardType {
+    public @interface KeyboardType {
     }
 
     //number
@@ -479,19 +479,19 @@ public class KeyUtils {
         return key >= KeyUtils.KEY_BLANK && key <= KeyUtils.KEY_BLACK;
     }
 
-    public static void init(Activity activity, @NonNull KeyBoardView keyboardView) {
+    public static void init(Activity activity, @NonNull KeyboardView keyboardView) {
         init(activity == null ? null : activity.getWindow(), keyboardView, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
     }
 
-    public static void init(Window window, @NonNull KeyBoardView keyboardView) {
+    public static void init(Window window, @NonNull KeyboardView keyboardView) {
         init(window, keyboardView, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
     }
 
-    public static void init(Activity activity, @NonNull KeyBoardView keyboardView, int gravity) {
+    public static void init(Activity activity, @NonNull KeyboardView keyboardView, int gravity) {
         init(activity == null ? null : activity.getWindow(), keyboardView, gravity);
     }
 
-    public static void init(Window window, @NonNull KeyBoardView keyboardView, int gravity) {
+    public static void init(Window window, @NonNull KeyboardView keyboardView, int gravity) {
         if (window == null)
             return;
 

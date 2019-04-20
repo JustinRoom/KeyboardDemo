@@ -5,14 +5,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import jsc.exam.com.keyboard.R;
 import jsc.exam.com.keyboard.widgets.dialog.InputDialog;
-import jsc.kit.keyboard.KeyBoardView;
+import jsc.kit.keyboard.KeyboardView;
 import jsc.kit.keyboard.KeyUtils;
 
 /**
@@ -24,17 +23,17 @@ import jsc.kit.keyboard.KeyUtils;
  */
 public class KeyboardFragment extends BaseFragment implements View.OnClickListener {
 
-    KeyBoardView keyboardView = null;
+    KeyboardView keyboardView = null;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_keyboard, container, false);
-        keyboardView = new KeyBoardView(root.getContext());
+        keyboardView = new KeyboardView(root.getContext());
         keyboardView.setBackgroundResource(R.drawable.key_keyboard_background_shape);
         keyboardView.setPadding(16, 24, 16, 24);
         keyboardView.addAllInputView(root);
-//        keyboardView.setNumberKeyBoardType(KeyUtils.TYPE_HORIZONTAL_NUMBER);
+//        keyboardView.setNumberKeyboardType(KeyUtils.TYPE_HORIZONTAL_NUMBER);
 //        keyboardView.setSupportMoving(false);
 //        keyboardView.setCreateKeyListener(new KeyBoardView.onCreateKeyListener() {
 //            @Override
