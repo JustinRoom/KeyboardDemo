@@ -1,7 +1,8 @@
 # Keyboard
+[ ![Download](https://api.bintray.com/packages/justinquote/maven/keyboard-component/images/download.svg) ](https://bintray.com/justinquote/maven/keyboard-component/_latestVersion)
+
 自定义支持拖动、支持缩放的软键盘。适用于Activity、Fragment、DialogFragment。当手指在键盘上滑动超过8pixels时就进入了拖动模式。
 
-[ ![Download](https://api.bintray.com/packages/justinquote/maven/keyboard-component/images/download.svg) ](https://bintray.com/justinquote/maven/keyboard-component/_latestVersion)
 
 <a href='https://bintray.com/justinquote/maven/keyboard-component?source=watch' alt='Get automatic notifications about new "keyboard-component" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a>
 
