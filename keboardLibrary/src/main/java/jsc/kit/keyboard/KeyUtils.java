@@ -273,7 +273,7 @@ public class KeyUtils {
                 keys = isPortrait ? getPortraitLetterKeys() : getLetterNumberKeys();
                 break;
             case TYPE_SYMBOL:
-                keys = getSymbolKeys();
+                keys = isPortrait ? getPortraitSymbolKeys() : getSymbolKeys();
                 break;
         }
         return keys;
@@ -641,6 +641,68 @@ public class KeyUtils {
         updateHorizontalWeight(KEY_DELETE, 1.0f);
         updateHorizontalWeight(KEY_NEXT, 1.0f);
         return symbolKeys;
+    }
+
+    public static List<List<KeyBean>> getPortraitSymbolKeys() {
+        if (portraitSymbolKeys.isEmpty()) {
+            //第一行
+            List<KeyBean> keys0 = new ArrayList<>();
+            keys0.add(keys.get(KEY_SYMBOL_040));
+            keys0.add(keys.get(KEY_SYMBOL_041));
+            keys0.add(keys.get(KEY_SYMBOL_042));
+            keys0.add(keys.get(KEY_SYMBOL_043));
+            keys0.add(keys.get(KEY_SYMBOL_044));
+            keys0.add(keys.get(KEY_CLOSE));
+            portraitSymbolKeys.add(keys0);
+            //第二行
+            List<KeyBean> keys1 = new ArrayList<>();
+            keys1.add(keys.get(KEY_SYMBOL_045));
+            keys1.add(keys.get(KEY_SYMBOL_046));
+            keys1.add(keys.get(KEY_SYMBOL_064));
+            keys1.add(keys.get(KEY_SYMBOL_063));
+            keys1.add(keys.get(KEY_SYMBOL_067));
+            keys1.add(keys.get(KEY_SYMBOL_068));
+            portraitSymbolKeys.add(keys1);
+            //第三行
+            List<KeyBean> keys2 = new ArrayList<>();
+            keys2.add(keys.get(KEY_SYMBOL_054));
+            keys2.add(keys.get(KEY_SYMBOL_055));
+            keys2.add(keys.get(KEY_SYMBOL_057));
+            keys2.add(keys.get(KEY_SYMBOL_056));
+            keys2.add(keys.get(KEY_SYMBOL_058));
+            keys2.add(keys.get(KEY_SYMBOL_059));
+            portraitSymbolKeys.add(keys2);
+            //第四行
+            List<KeyBean> keys3 = new ArrayList<>();
+            keys3.add(keys.get(KEY_SYMBOL_052));
+            keys3.add(keys.get(KEY_SYMBOL_053));
+            keys3.add(keys.get(KEY_SYMBOL_048));
+            keys3.add(keys.get(KEY_SYMBOL_049));
+            keys3.add(keys.get(KEY_SYMBOL_050));
+            keys3.add(keys.get(KEY_SYMBOL_051));
+            portraitSymbolKeys.add(keys3);
+            //第五行
+            List<KeyBean> keys4 = new ArrayList<>();
+            keys4.add(keys.get(KEY_BACK));
+            keys4.add(keys.get(KEY_SYMBOL_061));
+            keys4.add(keys.get(KEY_SYMBOL_062));
+            keys4.add(keys.get(KEY_SYMBOL_065));
+            keys4.add(keys.get(KEY_SYMBOL_066));
+            keys4.add(keys.get(KEY_DELETE));
+            portraitSymbolKeys.add(keys4);
+        }
+        updateHorizontalWeight(KEY_SYMBOL_048, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_049, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_050, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_051, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_061, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_067, 1.0f);
+        updateHorizontalWeight(KEY_SPACE, 1.0f);
+        updateHorizontalWeight(KEY_NUM, 1.0f);
+        updateHorizontalWeight(KEY_AA, 1.0f);
+        updateHorizontalWeight(KEY_DELETE, 1.0f);
+        updateHorizontalWeight(KEY_NEXT, 1.0f);
+        return portraitSymbolKeys;
     }
 
     public static void updateHorizontalWeight(@KeyCode int key, float weight) {
