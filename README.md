@@ -46,7 +46,82 @@ compile 'jsc.kit.keyboard:keyboard-component:_latestVersion'
 </dependency>
 ```
 
-### 四、Usage
+### 四、Attribution
+
+| 名称 | 类型 | 描述 |
+|:---|:---|:---|
+|`keyboardType`|enum|键盘类型:`number`、`letter`、`letterNumber`。仅支持在xml布局文件中显示效果，实际会根据`EditText`的`inputType`属性显示相应的键盘类型。|
+|`keyWidth`|dimension|按键的标准宽度，默认为 50dp。|
+|`keyHeight`|dimension|按键的标准高度，默认为`keyWidth`的五分之三。|
+|`keyHorizontalSpace`|dimension|按键水平间隙，默认为2dp。|
+|`keyVerticalSpace`|dimension|按键垂直间隙，默认为2dp。|
+
+### 五、Method
+
+| 名称 | 返回类型 |描述 |
+|:---|:---|:---|
+|`initKeySize(int keyWidth, int keyHeight)`|void|初始化按键的标准宽高|
+|`initKeySpace(int horizontalSpace, int verticalSpace)`|void|初始化按键水平、垂直间隙|
+|`initCustomTypeface(Typeface typeface)`|void|设置按键上的字体|
+|`getKeyboardSize()`|int[]|获取键盘的宽高。当键盘为隐藏状态时，宽高都为0|
+|`toggleVisibility()`|void|代码调用强制显隐键盘|
+|`showKeyboard(boolean withAnimation)`|void|代码调用强制显示键盘|
+|`closeKeyboard(boolean withAnimation)`|void|代码调用强制关闭键盘|
+|`toggleNumberKeys()`|void|切换字母键盘上方的数字键显隐状态|
+|`setCreateKeyListener(onCreateKeyListener createKeyListener)`|void|设置创建每个按键时回调监听|
+|`setKeyboardListener(OnKeyboardListener keyboardListener)`|void|设置键盘的显隐监听|
+|`setKeyDownListener(OnKeyDownListener keyDownListener)`|void|自定义按键按下回调监听|
+|`addAllInputView(View view)`|void|管理view树中所有`EditText`|
+|`addInputView(@NonNull EditText editText)`|void|管理某个`EditText`|
+|`removeAllInputView(View view)`|void|移除view树中所有`EditText`|
+|`removeInputView(@NonNull EditText editText)`|void||
+|`getKeyboardType()`|String|获取当前显示的键盘类型|
+|`setDragSupportModel(@DragSupportModel String curDragSupportModel)`|void|设置键盘拖动方式|
+|`setDefaultUpperCase(boolean upperCase)`|void|设置默认显示大小写键盘|
+
++ 1、键盘拖动方式
+```
+    public static final String ONLY_HORIZONTAL = "horizontal";//仅支持水平方向上拖动
+    public static final String ONLY_VERTICAL = "vertical";//仅支持垂直方向上拖动
+    public static final String ALL_DIRECTION = "all";//支持任意方向上拖动
+    public static final String NONE = "none";//不支持拖动
+
+    @StringDef({ONLY_HORIZONTAL, ONLY_VERTICAL, ALL_DIRECTION, NONE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface DragSupportModel {
+    }
+```
++ 2、监听创建按键回调
+```
+    public interface onCreateKeyListener {
+        /**
+         * @param keyboardType current keyboard type
+         * @param key          the key of view was creating
+         * @return label text sie. It's unit is dp.
+         */
+        float getKeyTextSize(@KeyUtils.KeyboardType String keyboardType, @KeyUtils.KeyCode int key);
+
+        void onKeyCreated(boolean isCachedView, KeyView keyView, KeyBean bean);
+    }
+```
+
++ 3、监听键盘的显隐
+```
+    public interface OnKeyboardListener {
+        void onShow(KeyboardView keyBoardView);
+
+        void onHide(KeyboardView keyBoardView);
+    }
+```
+
++ 4、按下按键监听
+```
+    public interface OnKeyDownListener {
+        boolean onKeyDown(KeyboardView keyBoardView, KeyView keyView);
+    }
+```
+
+### 六、Usage
  使用要点：
  + a、创建[KeyboardView](keboardLibrary/src/main/java/jsc/kit/keyboard/KeyboardView.java)实例（支持xml布局文件）：
 ```
