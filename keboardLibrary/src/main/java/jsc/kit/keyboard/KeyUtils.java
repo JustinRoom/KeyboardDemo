@@ -559,9 +559,7 @@ public class KeyUtils {
     }
 
     public static boolean isClickableKey(@KeyCode int key) {
-        if (isNotKey(key))
-            return false;
-        return true;
+        return !isNotKey(key);
     }
 
     public static boolean isNumberKey(@KeyCode int key) {

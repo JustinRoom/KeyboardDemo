@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:maxLines="1"
         android:textColor="#0A5028"
         android:textSize="16sp" />
 

@@ -17,6 +17,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -381,11 +382,9 @@ public class KeyboardView extends LinearLayout {
         size[0] = getPaddingLeft() + (keyWidth + 2 * keyHorizontalSpace) * column + getPaddingRight();
         //宽度大于屏幕宽度，重新计算按键的宽度
         if (size[0] > getResources().getDisplayMetrics().widthPixels) {
-            final int tempKeyWidth = keyWidth;
             int availableWidth = getResources().getDisplayMetrics().widthPixels - getPaddingLeft() - getPaddingRight() - keyHorizontalSpace * 2 * column;
             keyWidth = availableWidth / column;
             size[0] = getPaddingLeft() + (keyWidth + 2 * keyHorizontalSpace) * column + getPaddingRight();
-            keyHeight = keyWidth * keyHeight / tempKeyWidth;
         }
         size[1] = getPaddingTop() + (keyHeight + 2 * keyVerticalSpace) * row + getPaddingBottom();
         for (int i = 0; i < row; i++) {
