@@ -10,19 +10,41 @@
 ![](app/src/main/res/drawable/keboard_qr_code.png)
 
 ### 二、Screenshots
- + 1、数字键盘
- ![number_keyboard](output/shots/number_keyboard.png)
- 
- + 2、字母键盘
- ![number_keyboard](output/shots/letter_keyboard.png)
-  
-+ 3、字母、数字混合键盘
- ![number_keyboard](output/shots/letter_number_keyboard.png)
- 
- + 3、被拖至底部的混合键盘
-  ![number_keyboard](output/shots/move_to_bottom_keyboard.png)
- 
-### 三、Usage
+ + 1、横屏键盘效果
+ ![lower_letter](output/shots/l_lower_letter.png)
+ ![lower_letter_number](output/shots/l_lower_letter_number.png)
+ ![upper_letter](output/shots/l_upper_letter.png)
+ ![upper_letter_number](output/shots/l_upper_letter_number.png)
+ ![number_abc](output/shots/l_number_abc.png)
+ ![number](output/shots/l_number.png)
+ ![symbol](output/shots/l_symbol.png)
+ + 1、竖屏键盘效果
+ ![lower_letter](output/shots/p_lower_letter.png)
+ ![upper_letter](output/shots/p_upper_letter.png)
+ ![number_abc](output/shots/p_number_abc.png)
+ ![number](output/shots/p_number.png)
+ ![symbol](output/shots/p_symbol.png)
+
+### 三、implementation
+You may implementation recycler view support package first.
+```
+implementation 'com.android.support:appcompat-v7:xxx'
+```
++ 1.1、Gradle
+```
+compile 'jsc.kit.keyboard:keyboard-component:_latestVersion'
+```
++ 1.2、Maven
+```
+<dependency>
+  <groupId>jsc.kit.keyboard</groupId>
+  <artifactId>keyboard-component</artifactId>
+  <version>_latestVersion</version>
+  <type>pom</type>
+</dependency>
+```
+
+### 四、Usage
  使用要点：
  + a、创建[KeyboardView](keboardLibrary/src/main/java/jsc/kit/keyboard/KeyboardView.java)实例（支持xml布局文件）：
 ```
