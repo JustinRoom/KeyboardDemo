@@ -156,12 +156,17 @@ public class KeyUtils {
     public @interface KeyCode {
     }
 
+    //landscape
     private static SparseArray<KeyBean> keys = new SparseArray<>();
     private static List<List<KeyBean>> ninePalaceNumberKeys = new ArrayList<>();
     private static List<List<KeyBean>> ninePalaceNumberKeysWithABC = new ArrayList<>();
     private static List<List<KeyBean>> letterKeys = new ArrayList<>();
     private static List<List<KeyBean>> letterNumberKeys = new ArrayList<>();
     private static List<List<KeyBean>> symbolKeys = new ArrayList<>();
+    //portrait
+    private static List<List<KeyBean>> portraitLetterKeys = new ArrayList<>();
+    private static List<List<KeyBean>> portraitSymbolKeys = new ArrayList<>();
+
 
     static {
         //number
@@ -252,7 +257,7 @@ public class KeyUtils {
         keys.put(keyBean.getKey(), keyBean);
     }
 
-    public static List<List<KeyBean>> loadKeys(String inputType) {
+    public static List<List<KeyBean>> loadKeys(String inputType, boolean isPortrait) {
         List<List<KeyBean>> keys = null;
         switch (inputType) {
             case TYPE_NINE_PALACE_NUMBER:
@@ -262,10 +267,10 @@ public class KeyUtils {
                 keys = getNinePalaceNumberKeysWithABC();
                 break;
             case TYPE_LETTER:
-                keys = getLetterKeys();
+                keys = isPortrait ? getPortraitLetterKeys() : getLetterKeys();
                 break;
             case TYPE_LETTER_NUMBER:
-                keys = getLetterNumberKeys();
+                keys = isPortrait ? getPortraitLetterKeys() : getLetterNumberKeys();
                 break;
             case TYPE_SYMBOL:
                 keys = getSymbolKeys();
@@ -304,7 +309,15 @@ public class KeyUtils {
             keys3.add(keys.get(KEY_NEXT));
             ninePalaceNumberKeys.add(keys3);
         }
+        updateHorizontalWeight(KEY_SYMBOL_048, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_049, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_050, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_051, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_061, 1.0f);
         updateHorizontalWeight(KEY_SYMBOL_067, 1.0f);
+        updateHorizontalWeight(KEY_SPACE, 1.0f);
+        updateHorizontalWeight(KEY_NUM, 1.0f);
+        updateHorizontalWeight(KEY_AA, 1.0f);
         updateHorizontalWeight(KEY_DELETE, 1.0f);
         updateHorizontalWeight(KEY_NEXT, 2.0f);
         return ninePalaceNumberKeys;
@@ -341,7 +354,15 @@ public class KeyUtils {
             keys3.add(keys.get(KEY_NEXT));
             ninePalaceNumberKeysWithABC.add(keys3);
         }
+        updateHorizontalWeight(KEY_SYMBOL_048, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_049, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_050, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_051, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_061, 1.0f);
         updateHorizontalWeight(KEY_SYMBOL_067, 1.0f);
+        updateHorizontalWeight(KEY_SPACE, 1.0f);
+        updateHorizontalWeight(KEY_NUM, 1.0f);
+        updateHorizontalWeight(KEY_AA, 1.0f);
         updateHorizontalWeight(KEY_DELETE, 1.0f);
         updateHorizontalWeight(KEY_NEXT, 1.0f);
         return ninePalaceNumberKeysWithABC;
@@ -399,15 +420,88 @@ public class KeyUtils {
             keys3.add(keys.get(KEY_NEXT));
             letterKeys.add(keys3);
         }
-        updateHorizontalWeight(KEY_NUM, 1.75f);
+        updateHorizontalWeight(KEY_SYMBOL_048, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_049, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_050, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_051, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_061, 1.0f);
         updateHorizontalWeight(KEY_SYMBOL_067, 1.25f);
-        updateHorizontalWeight(KEY_DELETE, 1.75f);
-        updateHorizontalWeight(KEY_AA, 1.75f);
         updateHorizontalWeight(KEY_SPACE, 5.0f);
+        updateHorizontalWeight(KEY_NUM, 1.750f);
+        updateHorizontalWeight(KEY_AA, 1.75f);
+        updateHorizontalWeight(KEY_DELETE, 1.75f);
         updateHorizontalWeight(KEY_NEXT, 2.25f);
-
-
         return letterKeys;
+    }
+
+    public static List<List<KeyBean>> getPortraitLetterKeys() {
+        if (portraitLetterKeys.isEmpty()) {
+            //第一行
+            List<KeyBean> keys0 = new ArrayList<>();
+            keys0.add(keys.get(KEY_Q));
+            keys0.add(keys.get(KEY_W));
+            keys0.add(keys.get(KEY_E));
+            keys0.add(keys.get(KEY_R));
+            keys0.add(keys.get(KEY_T));
+            keys0.add(keys.get(KEY_CLOSE));
+            portraitLetterKeys.add(keys0);
+            //第二行
+            List<KeyBean> keys1 = new ArrayList<>();
+            keys1.add(keys.get(KEY_Y));
+            keys1.add(keys.get(KEY_U));
+            keys1.add(keys.get(KEY_I));
+            keys1.add(keys.get(KEY_O));
+            keys1.add(keys.get(KEY_P));
+            keys1.add(keys.get(KEY_A));
+            portraitLetterKeys.add(keys1);
+            //第三行
+            List<KeyBean> keys2 = new ArrayList<>();
+            keys2.add(keys.get(KEY_S));
+            keys2.add(keys.get(KEY_D));
+            keys2.add(keys.get(KEY_F));
+            keys2.add(keys.get(KEY_G));
+            keys2.add(keys.get(KEY_H));
+            keys2.add(keys.get(KEY_J));
+            portraitLetterKeys.add(keys2);
+            //第四行
+            List<KeyBean> keys3 = new ArrayList<>();
+            keys3.add(keys.get(KEY_K));
+            keys3.add(keys.get(KEY_L));
+            keys3.add(keys.get(KEY_Z));
+            keys3.add(keys.get(KEY_X));
+            keys3.add(keys.get(KEY_C));
+            keys3.add(keys.get(KEY_V));
+            portraitLetterKeys.add(keys3);
+            //第五行
+            List<KeyBean> keys4 = new ArrayList<>();
+            keys4.add(keys.get(KEY_B));
+            keys4.add(keys.get(KEY_N));
+            keys4.add(keys.get(KEY_M));
+            keys4.add(keys.get(KEY_SYMBOL_067));
+            keys4.add(keys.get(KEY_SYMBOL_061));
+            keys4.add(keys.get(KEY_DELETE));
+            portraitLetterKeys.add(keys4);
+            //第六行
+            List<KeyBean> keys5 = new ArrayList<>();
+            keys5.add(keys.get(KEY_AA));
+            keys5.add(keys.get(KEY_123));
+            keys5.add(keys.get(KEY_SYMBOL));
+            keys5.add(keys.get(KEY_SPACE));
+            keys5.add(keys.get(KEY_NEXT));
+            portraitLetterKeys.add(keys5);
+        }
+        updateHorizontalWeight(KEY_SYMBOL_048, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_049, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_050, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_051, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_061, 0.75f);
+        updateHorizontalWeight(KEY_SYMBOL_067, 0.75f);
+        updateHorizontalWeight(KEY_SPACE, 1.50f);
+        updateHorizontalWeight(KEY_NUM, 1.0f);
+        updateHorizontalWeight(KEY_AA, 1.0f);
+        updateHorizontalWeight(KEY_DELETE, 1.50f);
+        updateHorizontalWeight(KEY_NEXT, 1.50f);
+        return portraitLetterKeys;
     }
 
     public static List<List<KeyBean>> getLetterNumberKeys() {
@@ -476,11 +570,16 @@ public class KeyUtils {
             keys4.add(keys.get(KEY_NEXT));
             letterNumberKeys.add(keys4);
         }
-        updateHorizontalWeight(KEY_NUM, 1.75f);
+        updateHorizontalWeight(KEY_SYMBOL_048, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_049, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_050, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_051, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_061, 1.0f);
         updateHorizontalWeight(KEY_SYMBOL_067, 1.25f);
-        updateHorizontalWeight(KEY_DELETE, 1.75f);
-        updateHorizontalWeight(KEY_AA, 1.75f);
         updateHorizontalWeight(KEY_SPACE, 5.0f);
+        updateHorizontalWeight(KEY_NUM, 1.75f);
+        updateHorizontalWeight(KEY_AA, 1.75f);
+        updateHorizontalWeight(KEY_DELETE, 1.75f);
         updateHorizontalWeight(KEY_NEXT, 2.25f);
         return letterNumberKeys;
     }
@@ -534,9 +633,13 @@ public class KeyUtils {
         updateHorizontalWeight(KEY_SYMBOL_049, 1.5f);
         updateHorizontalWeight(KEY_SYMBOL_050, 1.5f);
         updateHorizontalWeight(KEY_SYMBOL_051, 1.5f);
-        updateHorizontalWeight(KEY_SYMBOL_061, 1f);
-        updateHorizontalWeight(KEY_SYMBOL_067, 1f);
-        updateHorizontalWeight(KEY_DELETE, 1f);
+        updateHorizontalWeight(KEY_SYMBOL_061, 1.0f);
+        updateHorizontalWeight(KEY_SYMBOL_067, 1.0f);
+        updateHorizontalWeight(KEY_SPACE, 1.0f);
+        updateHorizontalWeight(KEY_NUM, 1.0f);
+        updateHorizontalWeight(KEY_AA, 1.0f);
+        updateHorizontalWeight(KEY_DELETE, 1.0f);
+        updateHorizontalWeight(KEY_NEXT, 1.0f);
         return symbolKeys;
     }
 

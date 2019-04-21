@@ -24,8 +24,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="jsc.exam.com.keyboard.EmptyFragmentActivity"
-            android:screenOrientation="landscape" />
+            android:windowSoftInputMode="stateHidden"
+            android:name="jsc.exam.com.keyboard.EmptyFragmentActivity" />
 
     </application>
 

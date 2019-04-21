@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -371,7 +372,7 @@ public class KeyboardView extends LinearLayout {
      */
     private void createKeys() {
         resetKeys();
-        List<List<KeyBean>> keys = KeyUtils.loadKeys(getKeyboardType());
+        List<List<KeyBean>> keys = KeyUtils.loadKeys(getKeyboardType(), getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
         float maxWeight = getLayoutWeight(keys);
         int row = keys.size();
         int column = (int) maxWeight;
@@ -784,6 +785,11 @@ public class KeyboardView extends LinearLayout {
     public void hideIfNecessary() {
         if (getFocusedEditText() == null)
             closeKeyboard(true);
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     public void onResume() {

@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 
 import jsc.exam.com.keyboard.R;
 import jsc.exam.com.keyboard.widgets.dialog.InputDialog;
-import jsc.kit.keyboard.KeyboardView;
 import jsc.kit.keyboard.KeyUtils;
+import jsc.kit.keyboard.KeyboardView;
 
 /**
  * <br>Email:1006368252@qq.com
