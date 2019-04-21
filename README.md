@@ -19,11 +19,11 @@
  ![number](output/shots/l_number.png)
  ![symbol](output/shots/l_symbol.png)
  + 1、竖屏键盘效果
- ![lower_letter](output/shots/p_lower_letter.png)
- ![upper_letter](output/shots/p_upper_letter.png)
- ![number_abc](output/shots/p_number_abc.png)
- ![number](output/shots/p_number.png)
- ![symbol](output/shots/p_symbol.png)
+ ![lower_letter](output/shots/p_lower_letter_s.png)
+ ![upper_letter](output/shots/p_upper_letter_s.png)
+ ![number_abc](output/shots/p_number_abc_s.png)
+ ![number](output/shots/p_number_s.png)
+ ![symbol](output/shots/p_symbol_s.png)
 
 ### 三、implementation
 You may implementation recycler view support package first.
