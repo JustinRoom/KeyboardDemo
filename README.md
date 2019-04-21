@@ -19,7 +19,7 @@
  ![number](output/shots/l_number.png)
  ![symbol](output/shots/l_symbol.png)
  
- + 1、竖屏键盘效果
+ + 2、竖屏键盘效果
  
  ![lower_letter](output/shots/p_lower_letter_s.png)
  ![upper_letter](output/shots/p_upper_letter_s.png)
