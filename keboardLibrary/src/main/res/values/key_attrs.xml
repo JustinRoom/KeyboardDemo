@@ -6,6 +6,7 @@
             <enum name="number" value="0" />
             <enum name="letter" value="1" />
             <enum name="letterNumber" value="2" />
+            <enum name="symbol" value="3" />
         </attr>
         <attr name="keyWidth" format="dimension"/>
         <attr name="keyHeight" format="dimension"/>

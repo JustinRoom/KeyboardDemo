@@ -100,6 +100,8 @@ public class KeyboardView extends LinearLayout {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (v instanceof EditText) {
+                if (!v.hasFocus())
+                    v.requestFocus();
                 showKeyboardByEditTextInputType((EditText) v);
             }
             return false;
@@ -186,6 +188,9 @@ public class KeyboardView extends LinearLayout {
                 case 2:
                     showNumberKeys = true;
                     show(KeyUtils.TYPE_LETTER_NUMBER);
+                    break;
+                case 3:
+                    show(KeyUtils.TYPE_SYMBOL);
                     break;
             }
     }
@@ -1010,68 +1015,36 @@ public class KeyboardView extends LinearLayout {
     }
 
     private void show(@KeyUtils.KeyboardType String keyboardType) {
-        if (!keyboardType.equals(getKeyboardType())) {
+        final String lastKeyboardType = getKeyboardType();
+        if (!keyboardType.equals(lastKeyboardType)) {
             setKeyboardType(keyboardType);
-            switch (keyboardType) {
-                case KeyUtils.TYPE_NINE_PALACE_NUMBER:
-                    showNumberKeyboard();
-                    break;
-                case KeyUtils.TYPE_NINE_PALACE_NUMBER_WITH_ABC:
-                    showNumberWithABCKeyboard();
-                    break;
-                case KeyUtils.TYPE_LETTER:
-                case KeyUtils.TYPE_LETTER_NUMBER:
-                    showLetterKeyboard();
-                    break;
-                case KeyUtils.TYPE_SYMBOL:
-                    showSymbolKeyboard();
-                    break;
-            }
+            if (KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(lastKeyboardType)
+                    || KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(keyboardType))
+                executeKeyboardReLocation(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        createKeys();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+            else
+                createKeys();
         }
         showKeyboard(true);
-    }
-
-    private void showNumberKeyboard() {
-        createKeys();
-        if (getTranslationY() > 0) {
-            ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), 0).setDuration(300).start();
-        }
-    }
-
-    private void showNumberWithABCKeyboard() {
-        createKeys();
-    }
-
-    private void showLetterKeyboard() {
-        if (getTranslationX() == 0 && getTranslationY() == 0) {
-            createKeys();
-            return;
-        }
-        executeKeyboardReLocation(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                createKeys();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-    }
-
-    private void showSymbolKeyboard() {
-        createKeys();
     }
 
     private void setKeyboardType(@KeyUtils.KeyboardType String keyboardType) {

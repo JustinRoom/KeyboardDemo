@@ -6,8 +6,8 @@
     "apkInfo": {
       "type": "MAIN",
       "splits": [],
-      "versionCode": 8,
-      "versionName": "0.0.8",
+      "versionCode": 9,
+      "versionName": "0.0.9",
       "enabled": true,
       "outputFile": "KeyboardDemo.apk",
       "fullName": "release",
