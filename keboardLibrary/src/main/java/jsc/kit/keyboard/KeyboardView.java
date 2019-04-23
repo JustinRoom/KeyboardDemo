@@ -1018,8 +1018,9 @@ public class KeyboardView extends LinearLayout {
         final String lastKeyboardType = getKeyboardType();
         if (!keyboardType.equals(lastKeyboardType)) {
             setKeyboardType(keyboardType);
-            if (KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(lastKeyboardType)
+            if ((KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(lastKeyboardType)
                     || KeyUtils.TYPE_NINE_PALACE_NUMBER.equals(keyboardType))
+                    && (getTranslationX() != 0 || getTranslationY() != 0))
                 executeKeyboardReLocation(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {

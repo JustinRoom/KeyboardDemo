@@ -34,19 +34,6 @@ public class KeyboardFragment extends BaseFragment implements View.OnClickListen
         keyboardView.setBackgroundResource(R.drawable.key_keyboard_background_shape);
         keyboardView.setPadding(16, 24, 16, 24);
         keyboardView.addAllInputView(root);
-//        keyboardView.setNumberKeyboardType(KeyUtils.TYPE_HORIZONTAL_NUMBER);
-//        keyboardView.setCreateKeyListener(new KeyBoardView.onCreateKeyListener() {
-//            @Override
-//            public float getKeyTextSize(String keyboardType, int key) {
-//                if (KeyUtils.isNumberKey(key))
-//                    return 20;
-//                if (KeyUtils.isLetterKey(key)
-//                        || key == KeyUtils.KEY_AA
-//                        || key == KeyUtils.KEY_123)
-//                    return 16;
-//                return 14;
-//            }
-//        });
         KeyUtils.init(getActivity(), keyboardView);
 
         root.findViewById(R.id.btn_toggle).setOnClickListener(this);
