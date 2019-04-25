@@ -65,8 +65,8 @@ compile 'jsc.kit.keyboard:keyboard-component:_latestVersion'
 |`initCustomTypeface(Typeface typeface)`|void|设置按键上的字体|
 |`getKeyboardSize()`|int[]|获取键盘的宽高。当键盘为隐藏状态时，宽高都为0|
 |`toggleVisibility()`|void|代码调用强制显隐键盘|
-|`showKeyboard(boolean withAnimation)`|void|代码调用强制显示键盘|
-|`closeKeyboard(boolean withAnimation)`|void|代码调用强制关闭键盘|
+|`showKeyboard()`|void|代码调用强制显示键盘|
+|`closeKeyboard()`|void|代码调用强制关闭键盘|
 |`toggleNumberKeys()`|void|切换字母键盘上方的数字键显隐状态|
 |`setCreateKeyListener(onCreateKeyListener createKeyListener)`|void|设置创建每个按键时回调监听|
 |`setKeyboardListener(OnKeyboardListener keyboardListener)`|void|设置键盘的显隐监听|
