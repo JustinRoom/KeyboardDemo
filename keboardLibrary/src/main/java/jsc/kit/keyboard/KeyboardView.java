@@ -18,7 +18,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -432,7 +431,14 @@ public class KeyboardView extends LinearLayout {
             if (!KeyUtils.isNotKey(bean.getKey()))
                 viewSparseArray.put(key, keyView);
         }
-        LayoutParams params = new LayoutParams(0, keyHeight, bean.getHorizontalWeight());
+        LayoutParams params;
+        ViewGroup.LayoutParams p = keyView.getLayoutParams();
+        if (p instanceof LayoutParams) {
+            params = (LayoutParams) p;
+        } else {
+            params = new LayoutParams(0, keyHeight);
+        }
+        params.weight = bean.getHorizontalWeight();
         params.leftMargin = keyHorizontalSpace;
         params.rightMargin = keyHorizontalSpace;
         params.topMargin = keyVerticalSpace;
@@ -491,7 +497,7 @@ public class KeyboardView extends LinearLayout {
         KeyBean bean = keyView.getBean();
         switch (bean.getKey()) {
             case KeyUtils.KEY_CLOSE://关闭
-                closeKeyboard(true);
+                closeKeyboard();
                 break;
             case KeyUtils.KEY_SCALE://键盘缩放
                 autoScale();
@@ -692,87 +698,21 @@ public class KeyboardView extends LinearLayout {
 
     public void toggleVisibility() {
         if (getVisibility() == VISIBLE)
-            closeKeyboard(true);
+            closeKeyboard();
         else
-            showKeyboard(true);
+            showKeyboard();
     }
 
-    public void showKeyboard(boolean withAnimation) {
-        if (getVisibility() == VISIBLE)
-            return;
-        if (isCanDrag() || !withAnimation || getTranslationY() == 0) {
+    public void showKeyboard() {
+        if (getVisibility() != VISIBLE) {
             show();
-            return;
         }
-        int duration = (int) getTranslationX();
-        Animator animator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), 0).setDuration(Math.abs(duration));
-        animator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                setVisibility(VISIBLE);
-                enableAllKeys(false);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                show();
-                enableAllKeys(true);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                show();
-                enableAllKeys(true);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        animator.start();
     }
 
-    public void closeKeyboard(boolean withAnimation) {
-        if (getVisibility() != VISIBLE)
-            return;
-        if (isCanDrag() || !withAnimation) {
+    public void closeKeyboard() {
+        if (getVisibility() == VISIBLE) {
             hide();
-            return;
         }
-        int offsetY = 0;
-        if (getParent() != null) {
-            offsetY = ((ViewGroup) getParent()).getHeight() - getTop() + size[1];
-        }
-        if (offsetY == 0) {
-            hide();
-            return;
-        }
-        Animator animator = ObjectAnimator.ofFloat(this, View.TRANSLATION_Y, getTranslationY(), getTranslationY() + offsetY).setDuration(Math.abs(offsetY));
-        animator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                enableAllKeys(false);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                hide();
-                enableAllKeys(true);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                hide();
-                enableAllKeys(true);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        animator.start();
     }
 
     private void show() {
@@ -789,7 +729,7 @@ public class KeyboardView extends LinearLayout {
 
     public void hideIfNecessary() {
         if (getFocusedEditText() == null)
-            closeKeyboard(true);
+            closeKeyboard();
     }
 
     @Override
@@ -805,7 +745,7 @@ public class KeyboardView extends LinearLayout {
     }
 
     public void onPause() {
-        closeKeyboard(false);
+        closeKeyboard();
     }
 
     public void onDestroy() {
@@ -1045,7 +985,7 @@ public class KeyboardView extends LinearLayout {
             else
                 createKeys();
         }
-        showKeyboard(true);
+        showKeyboard();
     }
 
     private void setKeyboardType(@KeyUtils.KeyboardType String keyboardType) {
@@ -1083,9 +1023,6 @@ public class KeyboardView extends LinearLayout {
             }
         }
         removeAllViews();
-//        SparseArray<KeyView> cache = viewSparseArray.clone();
-//        viewSparseArray.clear();
-//        return cache;
     }
 
     private void ensureInitialized() {

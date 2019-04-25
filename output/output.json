@@ -3,15 +3,16 @@
     "outputType": {
       "type": "APK"
     },
-    "apkInfo": {
+    "apkData": {
       "type": "MAIN",
       "splits": [],
-      "versionCode": 10,
-      "versionName": "0.1.0",
+      "versionCode": 11,
+      "versionName": "0.1.1",
       "enabled": true,
       "outputFile": "KeyboardDemo.apk",
       "fullName": "release",
-      "baseName": "release"
+      "baseName": "release",
+      "content": "\n1、optimize KeyboardView"
     },
     "path": "KeyboardDemo.apk",
     "properties": {}
